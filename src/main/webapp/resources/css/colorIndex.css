@@ -1,0 +1,18 @@
+.ui-tagcloud{
+    background-color: lightcoral !important;
+}
+.ui-tagcloud-strength-2 a{
+    color: black!important;
+}
+.ui-tagcloud-strength-3 a{
+    color: #FBE7A1!important;
+} /* Blonde */
+.ui-tagcloud-strength-5 a{
+    color: #964B00!important;
+} /* Brune */
+.ui-tagcloud-strength-4 a{
+    color: #FFFFFF!important;
+} /* Blanche */
+.ui-tagcloud-strength-1 a{
+    color: #F0C300!important;
+} /*ambre*/

@@ -1,0 +1,19 @@
+
+
+#header{
+    height: 80px;
+    color: white !important;
+
+}
+#content{
+    position: relative;
+    margin-top: 25px;
+    min-height: 85vh;
+}
+
+#footer {
+    margin-top: 25px;
+    height:100px;
+    background-color: darkslategrey;
+    color: white !important;
+}

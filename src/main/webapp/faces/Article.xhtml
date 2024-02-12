@@ -1,0 +1,245 @@
+<ui:composition template="template/Layout.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="contenu">
+        <div class="card">
+            <div id="article_view">
+
+                <p:dataTable id="articles" var="article" value="#{articleBean.allArticle}" emptyMessage="No Article found with this criteria"
+                             rowKey="#{article.idArticle}"
+                             rows="10"
+                             paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="10,20,{ShowAll|'All'}"
+                             allowUnsorting="true" sortMode="single">
+
+                    <f:facet name="header">
+                        <div class="card">
+                            <h:form>
+                                <p:panelGrid columns="3" layout="grid">
+                                    <p:row>
+                                        <p:column>
+                                            <div class="flex flexRow justify-start itemCenter gap-1" style="width: 100%">
+                                                <h:outputLabel for="search_article" value="Search Article: "/>
+                                                <p:inputText id="search_article" value="#{articleBean.articleSearch.libelle}" label="Search Article" style="flex-grow: 1"/>
+                                            </div>
+                                        </p:column>
+                                        <p:column>
+                                            <div style="width: 100%">
+                                                <p:selectOneMenu id="search_type" value="#{articleBean.articleSearch.typeBiere}"
+                                                                 var="types"
+                                                                 filter="true"
+                                                                 filterMatchMode="startsWith"
+                                                                 filterNormalize="true"
+                                                                 style="width: 100%">
+
+                                                    <f:selectItems value="#{typeBean.allTypes}"/>
+                                                    <f:converter converterId="typeConverter"/>
+
+                                                    <p:column style="width:10%">
+                                                        <span style="width: 30px; height: 20px">#{types.id}</span>
+                                                    </p:column>
+
+                                                    <p:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="Nom Types"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{types.libelle}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        <h:outputText value="#{typeBean.allTypes.size() - 1} types"
+                                                                      style="font-weight:bold;" styleClass="py-1 block"/>
+                                                    </f:facet>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <p:selectOneMenu id="search_couleur" value="#{articleBean.articleSearch.couleur}" label="Search Couleur" style="width: 100%">
+                                                <f:selectItems value="#{couleurBean.allCouleur}"/>
+                                                <f:converter converterId="couleurConverter"/>
+
+                                                <f:facet name="footer">
+                                                    <h:outputText value="#{couleurBean.allCouleur.size() - 1} couleurs"
+                                                                  style="font-weight:bold;" styleClass="py-1 block"/>
+                                                </f:facet>
+                                            </p:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column>
+                                            <div style="width: 100%">
+                                                <p:selectOneMenu id="search_marque" value="#{articleBean.articleSearch.marque}"
+                                                                 var="marque"
+                                                                 filter="true"
+                                                                 filterMatchMode="startsWith"
+                                                                 filterNormalize="true"
+                                                                 style="width: 100%">
+
+                                                    <f:selectItems value="#{marqueBean.allMarques}"/>
+                                                    <f:converter converterId="marqueConverter"/>
+
+                                                    <p:column style="width:10%">
+                                                        <span style="width: 30px; height: 20px">#{marque.id}</span>
+                                                    </p:column>
+
+                                                    <p:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="Nom Marque"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{marque.libelle}"/>
+                                                    </p:column>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <div style="width: 100%">
+                                                <p:selectOneMenu id="search_continent" value="#{articleBean.articleSearch.continent}"
+                                                                 style="width: 100%" label="Choisir un Continent">
+                                                    <p:ajax listener="#{paysBean.onContinentChange(articleBean.articleSearch.continent)}" update="search_pays"/>
+                                                    <f:selectItems value="#{continentBean.filteredContinents}"/>
+                                                    <f:converter converterId="continentConverter"/>
+                                                    <f:facet name="footer">
+                                                        <h:outputText value="#{continentBean.allContinents.size() - 1} continents"
+                                                                      style="font-weight:bold;" styleClass="py-1 block"/>
+                                                    </f:facet>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <div style="width: 100%">
+                                                <p:selectOneMenu id="search_pays" value="#{articleBean.articleSearch.pays}"
+                                                                 var="pays"
+                                                                 filter="true"
+                                                                 filterMatchMode="startsWith"
+                                                                 filterNormalize="true"
+                                                                 style="width: 100%">
+
+                                                    <f:selectItems value="#{paysBean.filteredPays}"/>
+                                                    <f:converter converterId="paysConverter"/>
+
+                                                    <p:column style="width:10%">
+                                                        <span style="width: 30px; height: 20px">#{pays.id}</span>
+                                                    </p:column>
+
+                                                    <p:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="Nom Pays"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{pays.libelle}"/>
+                                                    </p:column>
+
+                                                    <f:facet name="footer">
+                                                        <h:outputText value="#{paysBean.filteredPays.size() - 1} pays"
+                                                                      style="font-weight:bold;" styleClass="py-1 block"/>
+                                                    </f:facet>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </p:column>
+
+                                    </p:row>
+
+                                    <p:row styleClass="flex justify-center">
+                                        <p:column>
+                                            <div class="flex flexCol justify-start itemCenter gap-1" id="search_titrage">
+                                                <h:outputText id="displayTitrage" value="Titrage #{articleBean.articleSearch.titrageMin.titrage} - #{articleBean.articleSearch.titrageMax.titrage}"/>
+                                                <p:slider for="titrageMin, titrageMax" display="displayTitrage" style="width: 200px" range="true"
+                                                          displayTemplate="Tirage {min} - {max}"
+                                                          minValue="#{articleBean.articleSearch.titrageMin.titrage}"
+                                                          maxValue="#{articleBean.articleSearch.titrageMax.titrage}"/>
+                                                <h:inputHidden id="titrageMin" value="#{articleBean.articleSearch.titrageMin.titrage}"/>
+                                                <h:inputHidden id="titrageMax" value="#{articleBean.articleSearch.titrageMax.titrage}"/>
+                                            </div>
+                                        </p:column>
+
+                                        <p:column>
+                                            <div class="flex justify-center gap-1 itemCenter" style="width: 100%">
+                                                <p:commandButton value="Submit" action="#{articleBean.search}" update="articles" styleClass="width50" icon="pi pi-check" iconPos="right"/>
+                                                <p:commandButton value="Initialize" action="#{articleReset.reset}" update="@form,articles" styleClass="width50" icon="pi pi-undo" iconPos="right"/>
+                                            </div>
+
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                            </h:form>
+                        </div>
+                    </f:facet>
+
+
+                    <p:column headerText="ID ARTICLE" sortBy="#{article.idArticle}" style="width: 10%!important;">
+                        <h:outputText value="#{article.idArticle}" />
+                    </p:column>
+                    <p:column headerText="NOM ARTICLE" style="width: 35%!important;">
+                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.nomArticle}" />
+                    </p:column>
+
+                    <p:column headerText="VOLUMNE" style="width: 8%!important;">
+                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.volumeArticle.volume}" />
+                    </p:column>
+
+                    <p:column headerText="TITRAGE"  style="width: 12%!important;">
+                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.titrageArticle.titrage}" />
+                    </p:column>
+
+                    <p:column headerText="PRIX D'ACHAT"  style="width: 8%!important;">
+                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.prixArticle}" />
+                    </p:column>
+                    <p:column headerText="STOCK" style="width: 8%!important;">
+                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.stockArticle}" />
+                    </p:column>
+
+
+                    <p:column style="width:3rem;text-align: center">
+                        <p:commandButton update="articleDetail" oncomplete="PF('articleDialog').show()"
+                                         icon="pi pi-search" title="View">
+                            <f:setPropertyActionListener value="#{article}"
+                                                         target="#{articleBean.selectedArticle}"/>
+                        </p:commandButton>
+                    </p:column>
+
+
+                    <f:facet name="paginatorBottomRight">
+                        <p:commandButton type="button" icon="pi pi-cloud-upload"/>
+                    </f:facet>
+                </p:dataTable>
+            </div>
+
+            <p:dialog header="Detail Information" widgetVar="articleDialog" modal="true" showEffect="fade"
+                      hideEffect="fade" resizable="false"  closeOnEscape="true">
+                <p:outputPanel id="articleDetail" style="text-align:center;">
+                    <p:column rendered="#{not empty articleBean.selectedArticle}">
+                        <div class="article">
+                            <div class="article-grid-item card" style="margin-bottom: 0">
+                                <div class="article-grid-item-top">
+                                    <div>
+                                        <h:graphicImage library="img" name="beer.png" style="width: 5%"/>
+                                        <span class="article-marque">#{article.marqueArticle.libelle}</span>
+                                    </div>
+                                </div>
+                                <div class="article-grid-item-content">
+                                    <h:graphicImage library="img" name="beer2.png" style="width: 20%"/>
+                                    <div class="article-name">#{articleBean.selectedArticle.nomArticle}</div>
+                                    <div class="article-description">#{article.fabricantArticle.nomFabricant}</div>
+                                </div>
+                                <div class="article-grid-item-bottom">
+                                    <h:outputText value="#{articleBean.selectedArticle.prixArticle}"
+                                                  styleClass="article-price">
+                                        <f:convertNumber currencySymbol="€" type="currency"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+                    </p:column>
+                </p:outputPanel>
+            </p:dialog>
+        </div>
+    </ui:define>
+</ui:composition>
+

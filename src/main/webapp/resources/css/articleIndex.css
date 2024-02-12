@@ -1,0 +1,94 @@
+
+.ui-dock.top {
+    top: 0.25em!important;
+}
+
+.marginAuto{
+    margin: 0 auto;
+}
+
+.width80{
+    width: 80%;
+}
+.width50{
+    width: 50%;
+}
+
+
+.textCenter{
+    text-align: center!important;
+}
+
+.flex{
+    display: flex;
+}
+.flexRow{
+    flex-direction: row;
+}
+.flexCol{
+    flex-direction: column;
+}
+.justify-between{
+    justify-content: space-between;
+}
+.justify-center{
+    justify-content: center;
+}
+.justify-start{
+    justify-content: flex-start;
+}
+
+.itemCenter{
+    align-items: center;
+}
+
+.sticky{
+    position: fixed;
+    z-index: 1;
+    top:0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.gap-1{
+    gap: 0.5rem !important;
+}
+
+
+/*overlay*/
+.article{
+
+}
+
+.article-grid-item{
+
+}
+
+.article-grid-item-top{
+    margin: 1em 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.article-marque{
+
+}
+
+.article-grid-item-content{
+}
+
+.article-name{}
+
+.article-description{}
+
+.article-grid-item-bottom{}
+
+.article-price{}
+
+.flag {
+    width: 20px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 5px; /* Add some spacing between flag and text */
+}
