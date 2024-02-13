@@ -172,7 +172,7 @@
                         </div>
                     </f:facet>
 
-
+                    <div class="articleTable" id="articleTable">
                     <p:column headerText="ID ARTICLE" sortBy="#{article.idArticle}" style="width: 10%!important;">
                         <h:outputText value="#{article.idArticle}" />
                     </p:column>
@@ -194,7 +194,7 @@
                     <p:column headerText="STOCK" style="width: 8%!important;">
                         <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.stockArticle}" />
                     </p:column>
-
+                    </div>
 
                     <p:column style="width:3rem;text-align: center">
                         <p:commandButton update="articleDetail" oncomplete="PF('articleDialog').show()"
@@ -206,7 +206,11 @@
 
 
                     <f:facet name="paginatorBottomRight">
-                        <p:commandButton type="button" icon="pi pi-cloud-upload"/>
+                                <div class="card">
+                                <p:commandButton id="printPage" value="Print" type="button" icon="pi pi-print" styleClass="shadow-1 mb-3">
+                                    <p:printer target="articles" configuration="globalStyles: true, title: 'Nature Image Header', timeout: 1000"/>
+                                </p:commandButton>
+                                </div>
                     </f:facet>
                 </p:dataTable>
             </div>
