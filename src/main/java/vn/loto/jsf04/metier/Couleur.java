@@ -13,6 +13,9 @@ public class Couleur {
         this.id = id;
         this.nomCouleur = nomCouleur;
     }
+    public Couleur(String nomCouleur){
+        this.nomCouleur = nomCouleur;
+    }
 
 
     public Integer getId()

@@ -3,12 +3,44 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
-<ui:define name="contenu">
-    <div class="card">
-        <h:form>
-            <p>Welcome #{loginBean.username}</p>
-            <h:commandLink action="#{loginBean.logout()}" value="Logout"></h:commandLink>
-        </h:form>
-    </div>
-</ui:define>
+    <ui:define name="contenu">
+        <div class="card flex flex-column flex-nowrap justify-content-center align-items-center" style="min-width: 60em;">
+                <h:graphicImage library="img" name="admin.png" styleClass="w-2"/>
+                <h:outputLabel value="Bienvenue sur la page d'administration" styleClass="mb-2 py-2 uppercase text-3xl text-red-500 font-bold"/>
+
+                <div class="mb-2 flex flex-row justify-content-center align-items-center">
+                    <h:graphicImage library="img" name="newUser.png" styleClass="w-2rem"/>
+                    <h:outputLabel value="Créer un nouveau compte" styleClass="py-2"/>
+                </div>
+
+                <h:form id="inscriptionForm" styleClass="text-center w-9 my-4">
+                    <div class = "grid flex-nowrap justify-content-center align-items-center">
+                        <div class="col-fixed" style="width: 45%">
+                            <p:outputLabel for="username" styleClass="text-center p-3 border-round-sm font-bold" value="Identifiant:"/>
+                        </div>
+                        <div class="col">
+                            <p:inputText id="username" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.username}" required="true"/>
+                        </div>
+                    </div>
+                    <div class = "grid flex-nowrap justify-content-center align-items-center">
+                        <div class="col-fixed" style="width: 45%">
+                            <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Mots de passe:"/>
+                        </div>
+                        <div class="col">
+                            <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.newPassword}" required="true"/>
+                        </div>
+                    </div>
+
+                    <p:commandButton value="Inscription" action="#{utilisateurBean.createNewUser()}" ajax="false" type="submit" styleClass="my-4" oncomplete="finishInscription(xhr,status,args)"/>
+                </h:form>
+        </div>
+        <script type="text/javascript">
+            function finishInscription(xhr,status,args) {
+                if(args.validationFailed)
+                    PF('spot').show();
+                else
+                    PF('spot').hide();
+            }
+        </script>
+    </ui:define>
 </ui:composition>

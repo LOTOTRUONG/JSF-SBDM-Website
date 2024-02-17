@@ -61,11 +61,12 @@ public class TypeDAO extends DAO<Type, Type, Integer> {
     }
     @Override
     public boolean insert(Type type) {
-        String sqlRequest = "insert into TYPEBIERE values " + type.getLibelle();
-        try(Statement statement = connection.createStatement()) {
-            statement.execute(sqlRequest);
+        String sqlRequest = "INSERT INTO TYPEBIERE (NOM_TYPE) VALUES (?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, type.getLibelle());
+            preparedStatement.executeUpdate();
             return true;
-        }catch (SQLException E) {
+        } catch (SQLException E) {
             E.printStackTrace();
             return false;
         }

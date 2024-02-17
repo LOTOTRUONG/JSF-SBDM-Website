@@ -1,10 +1,17 @@
 package vn.loto.jsf04.jaas;
 
+import vn.loto.jsf04.dao.DAOFactory;
+import vn.loto.jsf04.metier.Roles;
+import vn.loto.jsf04.metier.Utilisateur;
+import vn.loto.jsf04.security.HashPassword;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +32,7 @@ public class MyLoginModule implements LoginModule {
     private static final Logger logger = Logger.getLogger(MyLoginModule.class.getName());
     private String username = null;
     private String password = null;
+    private String passwordHash;
     private boolean isAuthenticated = false;
     private boolean commitSucceeded = false;
 
@@ -70,22 +78,26 @@ public class MyLoginModule implements LoginModule {
             if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
                 throw new LoginException("Data specified had null values");
             }
+            Utilisateur utilisateur = new Utilisateur(username, password);
+            Utilisateur users = DAOFactory.getUtilisateurDAO().getByUsername(username);
 
-            if (username.equals("user") && password.equals("user")) {
-                userGroups.add("user");
-                isAuthenticated = true;
-                return true;
-            }
-            if (username.equals("admin") && password.equals("admin123")) {
-                userGroups.add("user");
-                userGroups.add("admin");
+            if (utilisateur.getUsername().equals(users.getUsername()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
+                if ("admin".equals(users.getRoles().getName())) {
+                    // Add all role names to userGroups if the user is an admin
+                    List<Roles> roles = DAOFactory.getRolesDAO().getAll(); // Assuming you have a method to retrieve all roles
+                    for (Roles role : roles) {
+                        userGroups.add(role.getName());
+                    }
+                } else {
+                    userGroups.add(users.getRoles().getName());
+                }
                 isAuthenticated = true;
                 return true;
             }
 
             throw new LoginException("Authentication failed");
 
-        } catch (IOException | UnsupportedCallbackException e) {
+        } catch (IOException | UnsupportedCallbackException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new LoginException(e.getMessage());
         }
 

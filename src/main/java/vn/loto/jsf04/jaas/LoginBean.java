@@ -12,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
+import vn.loto.jsf04.bean.UtilisateurBean;
 
 import java.io.Serializable;
 
@@ -27,50 +28,69 @@ public class LoginBean implements Serializable {
     @Getter
     @Setter
     private String password;
-    private String requete;
     @Inject
     FacesContext facesContext;
     @Inject
     ExternalContext externalContext;
 
     private String originalURI;
+    @Inject
+    private UtilisateurBean utilisateurBean;
+
+
     @PostConstruct
     public void init(){
         originalURI = (String) externalContext.getRequestMap().get(RequestDispatcher.FORWARD_REQUEST_URI);
+
         String originalQuery = (String) externalContext.getRequestMap().get(RequestDispatcher.FORWARD_QUERY_STRING);
-        originalURI = originalURI.substring(originalURI.indexOf("/faces"));
-        if (originalQuery != null){
-            originalURI += "?" + originalQuery;
+        if (originalURI != null) {
+            int indexOfFaces = originalURI.indexOf("/faces");
+            if (indexOfFaces != -1) { // Check if "/faces" exists in the originalURI
+                originalURI = originalURI.substring(indexOfFaces); // Only substring if "/faces" exists
+                if (originalQuery != null){
+                    originalURI += "?" + originalQuery;
+                }
+            }
         }
+
+        /*
+        originalURI = originalURI.substring(originalURI.indexOf("/faces"));
+
+        originalURI += "?faces-redirect=true";
+        */
+
     }
+    public UtilisateurBean getUtilisateurBean() {
+        return utilisateurBean;
+    }
+
+    public void setUtilisateurBean(UtilisateurBean utilisateurBean) {
+        this.utilisateurBean = utilisateurBean;
+    }
+
 
     public String login(){
         try {
             HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
             request.login(username, password);
-            return originalURI;
-
+            //return originalURI;
+            // Set username in UtilisateurBean
+            utilisateurBean.setUsername(username);
+            utilisateurBean.setOldPassword(password);
             // If login is successful, redirect to the original URI if available, or to a default page
-            //if (originalURI != null && !originalURI.isEmpty()) {
-              //  return originalURI + "?faces-redirect=true";
-          //  } else {
-            //    return "/faces/Index.xhtml?faces-redirect=true"; // Change this to your desired landing page
-          //  }
+            if (originalURI != null && !originalURI.isEmpty()) {
+                return originalURI + "?faces-redirect=true";
+            } else {
+               return "/faces/Index.xhtml?faces-redirect=true"; // Change this to your desired landing page
+            }
+
         }
         catch (ServletException servletException){
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Errors: Login failed", null));
-            return "login/Error.xhtml";
+            return "/faces/login/Error.xhtml";
         }
     }
 
-    public String logout() {
-        HttpServletRequest request = (HttpServletRequest) externalContext.getRequest();
-        try {
-            request.logout();
-            return "/login.xhtml?faces-redirect=true";
-        } catch (ServletException e) {
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Logout failed", null));
-            return null; // Stay on the same page
-        }
-    }
+
+
 }

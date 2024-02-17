@@ -7,8 +7,12 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/Couleur.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/Index.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/Pays.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/admin/ArticleAdmin.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/admin" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/admin/Setting.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/admin" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/login/Login.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/login" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/template/Layout.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/template" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/template/Menu.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/template" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/faces/user/Couleur.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/faces/user" />
       </map>
     </option>
   </component>

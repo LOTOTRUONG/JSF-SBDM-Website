@@ -67,7 +67,7 @@ public class FabricantDAO extends DAO<Fabricant, Fabricant, Integer> {
 
 
     @Override
-    public boolean insert(Fabricant object) {
+    public boolean update(Fabricant object) {
         String sqlRequest = "update FABRICANT set NOM_FABRICANT = ? WHERE ID_FABRICANT = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest,Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1,object.getNomFabricant());
@@ -80,7 +80,7 @@ public class FabricantDAO extends DAO<Fabricant, Fabricant, Integer> {
     }
 
     @Override
-    public boolean update(Fabricant object) {
+    public boolean insert(Fabricant object) {
         String sqlRequest = "insert into FABRICANT values " + object.getNomFabricant();
         try(Statement statement = connection.createStatement()) {
             statement.execute(sqlRequest);

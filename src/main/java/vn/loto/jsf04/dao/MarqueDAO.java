@@ -66,8 +66,8 @@ public class MarqueDAO extends DAO<Marque, Marque, Integer> {
     }
 
     @Override
-    public boolean insert(Marque object) {
-        String sqlRequest = "update PMarque set NOM_PMarque = ? WHERE ID_Marque = ?";
+    public boolean update(Marque object) {
+        String sqlRequest = "update Marque set NOM_Marque = ? WHERE ID_Marque = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest,Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, object.getLibelle());
             preparedStatement.setInt(2, object.getId());
@@ -80,7 +80,7 @@ public class MarqueDAO extends DAO<Marque, Marque, Integer> {
     }
 
     @Override
-    public boolean update(Marque object) {
+    public boolean insert(Marque object) {
         String sqlRequest = "insert into Marque values " + object.getLibelle();
         try(Statement statement = connection.createStatement()) {
             statement.execute(sqlRequest);

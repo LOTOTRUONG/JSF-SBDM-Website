@@ -14,6 +14,6 @@
 #footer {
     margin-top: 25px;
     height:100px;
-    background-color: darkslategrey;
+    background-color: rgba(128, 78, 10, 0.87);
     color: white !important;
 }

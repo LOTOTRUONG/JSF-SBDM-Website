@@ -1,4 +1,4 @@
-<ui:composition template="template/Layout.xhtml"
+<ui:composition template="../template/Layout.xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -201,10 +201,11 @@
                         <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.stockArticle}" />
                     </p:column>
 
-                    <!--button to see detail article-->
-                    <p:column style="width:3rem;text-align: center" headerText="DETAIL">
-                        <p:commandButton update="articleDetail" oncomplete="PF('articleDialog').show()"
-                                         icon="pi pi-search" title="View">
+                    <!--button to edit article-->
+                    <p:column style="width:3rem;text-align: center" headerText="MODIFIER">
+                        <p:commandButton update="modify-article-content" oncomplete="PF('modifyArticleDialog').show()"
+                                         icon="pi pi-user-edit" title="Modify"
+                                        styleClass="edit-buton ui-button-sucess" process="@this">
                             <f:setPropertyActionListener value="#{article}"
                                                          target="#{articleBean.selectedArticle}"/>
                         </p:commandButton>
@@ -213,84 +214,165 @@
 
                     <!--print button-->
                     <f:facet name="paginatorBottomRight">
-                                <p:commandButton id="printPage" value="Print" type="button" icon="pi pi-print" styleClass="shadow-1 mb-3">
-                                    <p:printer target="articles" configuration="globalStyles: true, title: 'Nature Image Header', timeout: 1000"/>
-                                </p:commandButton>
+                        <p:commandButton id="printPage" value="Print" type="button" icon="pi pi-print" styleClass="shadow-1 mb-3">
+                            <p:printer target="articles" configuration="globalStyles: true, title: 'Nature Image Header', timeout: 1000"/>
+                        </p:commandButton>
                     </f:facet>
                 </p:dataTable>
             </div>
 
 
-            <!--detail article-->
-            <p:dialog header="DETAIL INFORMATION DE BIERES" widgetVar="articleDialog" modal="true" showEffect="fade"
+            <!--Modify article-->
+            <p:dialog header="Modifier l'Information de Bieres" widgetVar="modifyArticleDialog" modal="true" showEffect="fade"
                       hideEffect="fade" resizable="false"  closeOnEscape="true">
-                <p:outputPanel id="articleDetail" styleClass="text-center">
-                    <p:column rendered="#{not empty articleBean.selectedArticle}">
-                        <div class="article">
-                            <div class="article-grid-item flex flex-row justify-content-center align-items-center mb-0 py-5">
-                                <h:graphicImage library="img" name="brand.png" style="width: 5%"/>
-                                <h:outputText value="#{articleBean.selectedArticle.marqueArticle.libelle}" styleClass="uppercase text-xl text-orange-600 font-bold"/>
+                <p:outputPanel id="modify-article-content" styleClass="text-center">
+                    <p:column rendered="#{not empty articleBean.selectedArticle}" styleClass="flex flex-column justify-content-center align-items-center">
+                        <div class="w-9 flex flex-column justify-content-center align-items-center" style="min-width: 50em">
+
+                            <!--Nom de biere-->
+                            <div class = "grid w-full">
+                                <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Nom de biere: </div>
+                                </div>
+                                <div class="col">
+                                    <p:inputText styleClass="text-center p-3 border-round-sm surface-50 w-9" value="#{articleBean.selectedArticle.nomArticle}"/>
+                                </div>
                             </div>
-                                <div class="article-grid-item-content flex justify-content-center align-items-center flex-column">
-                                    <div class="flex flex-row  justify-content-center">
-                                        <h:graphicImage library="img" name="beer1.png" styleClass="w-3 flex-row"/>
-                                        <p:outputLabel value="#{articleBean.selectedArticle.volumeArticle.volume}" styleClass="border-circle bg-yellow-200 flex justify-content-center align-items-center" style="width: 2rem;height: 2rem; color: red"/>
 
-                                    </div>
-
-                                    <div class="article-name uppercase text-xl text-orange-600 font-bold py-5">#{articleBean.selectedArticle.nomArticle}</div>
-
-                                    <div class="w-9">
-
-                                        <!--titrage de biere-->
-                                        <div class = "grid">
-                                            <div class="col-fixed" style="width: 40%">
-                                                <div class="text-center p-3 border-round-sm surface-ground font-bold">Titrage de bieres: </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.titrageArticle.titrage}</div>
-                                            </div>
-                                        </div>
-                                    <!--type de biere-->
-                                    <div class = "grid">
-                                        <div class="col-fixed" style="width: 40%">
-                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Type de bieres: </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.typeArticle.libelle}</div>
-                                        </div>
-                                    </div>
-
-                                        <!--couleur de biere-->
-                                        <div class = "grid">
-                                            <div class="col-fixed" style="width: 40%">
-                                                <div class="text-center p-3 border-round-sm surface-ground font-bold">Couleur de bieres: </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.couleurArticle.nomCouleur}</div>
-                                            </div>
-                                        </div>
-
-                                    <!--pays de biere-->
-                                    <div class = "grid">
-                                        <div class="col-fixed" style="width: 40%">
-                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Pays d'origin: </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.paysArticle.libelle}</div>
-                                        </div>
-                                    </div>
-                                    </div>
+                            <!--titrage de biere-->
+                            <div class = "grid w-full">
+                                <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Titrage de biere: </div>
                                 </div>
-                                <div class="flex flex-row justify-content-center align-items-center">
-                                    <h:outputText value="#{articleBean.selectedArticle.prixArticle}"
-                                                  styleClass="text-4xl font-bold">
-                                        <f:convertNumber currencySymbol="€" type="currency"/>
-                                    </h:outputText>
+                                <div class="col">
+                                    <p:spinner id="titrageSpinner" styleClass="text-center border-round-sm surface-50 w-9" value="#{articleBean.selectedArticle.titrageArticle.titrage}" min="0.0" max="30.0" stepFactor="0.1"/>
                                 </div>
+                            </div>
+
+                            <!--Couleur de biere-->
+                            <div class = "grid w-full">
+                                <h:form id="modifyCouleur" styleClass="flex justify-content-center flex-row align-items-center w-full">
+                                 <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Couleur de biere: </div>
+                                </div>
+                                <div class="col flex justify-content-center	 align-items-center">
+                                        <p:selectOneMenu id="couleurs" value="#{articleBean.selectedArticle.couleurArticle}" styleClass="w-8">
+                                            <f:selectItems value="#{couleurBean.allCouleur}"/>
+                                            <f:converter converterId="couleurConverter"/>
+                                        </p:selectOneMenu>
+
+                                    <p:commandButton type="button" icon="pi pi-plus" styleClass="ml-2 rounded-button ui-button-warning text-xs" style="width: 1.75rem !important; height: 1.75rem!important;"
+                                                     actionListener="#{couleurBean.openNew}" onclick="PF('addColorDialog').show()"/>
+                                </div>
+                                </h:form>
+                                <h:form id="colorDialog">
+                                <p:dialog header="AJOUTER UNE COULEUR" widgetVar="addColorDialog" width="450px" showEffect="fade" >
+                                    <p:growl id="messages" showDetail="true" />
+                                    <p:panel>
+                                        <h:panelGrid columns="2" columnClasses="label, value">
+                                            <h:outputLabel for="colorName" value="Nome de couleur:" style="width: 60%" styleClass="mr-4"/>
+                                            <p:inputText id="colorName" value="#{couleurBean.nomCouleur}" required="true"/>
+
+                                            <!-- You can add more fields here if needed -->
+
+                                            <f:facet name="footer">
+                                                <p:commandButton type="button" value="Ajouter" style="width: 6rem" styleClass="rounded-button mt-4">
+                                                    <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                                </p:commandButton>
+                                                <p:commandButton type="button" value="Annuler" styleClass="rounded-button ui-button-secondary ml-3 mt-4" style="width: 6rem"  onclick="PF('addColorDialog').hide()"/>
+                                            </f:facet>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                    <p:confirmDialog global="true" widgetVar="confDialog"  showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                        <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" actionListener="#{couleurBean.addNewColor}" onclick="PF('confDialog').hide()" process="@this"/>
+                                    </p:confirmDialog>
+                                </p:dialog>
+                                </h:form>
+                            </div>
+
+                            <!--type de biere-->
+                            <div class = "grid w-full">
+                                <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Type de bieres: </div>
+                                </div>
+                                <div class="col flex justify-content-center	 align-items-center">
+                                    <p:selectOneMenu id="typeBox" value="#{articleBean.selectedArticle.typeArticle}" styleClass="w-8">
+                                        <f:selectItems value="#{typeBean.allTypes}"/>
+                                        <f:converter converterId="typeConverter"/>
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton type="button" icon="pi pi-plus" styleClass="ml-2 rounded-button ui-button-warning text-xs" style="width: 1.75rem !important; height: 1.75rem!important;" onclick="PF('addType').show()"/>
+
+                                    <p:dialog header="AJOUTER UNE TYPE" widgetVar="addType" width="450px" showEffect="fade" >
+                                        <h:form id="addTypeForm">
+                                            <p:panel>
+                                                <h:panelGrid columns="2" columnClasses="label, value">
+                                                    <h:outputLabel for="typeName" value="Nome de type:" style="width: 60%" styleClass="mr-4"/>
+                                                    <p:inputText id="typeName" value="#{typeBean.libelle}" required="true"/>
+
+                                                    <!-- You can add more fields here if needed -->
+
+                                                    <f:facet name="footer">
+                                                        <p:commandButton type="button" value="Ajouter" style="width: 6rem" styleClass="rounded-button mt-4">
+                                                            <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                                                        </p:commandButton>
+                                                        <p:commandButton type="button" value="Annuler" styleClass="rounded-button ui-button-secondary ml-3 mt-4" style="width: 6rem"  onclick="PF('addType').hide()"/>
+                                                    </f:facet>
+                                                </h:panelGrid>
+                                            </p:panel>
+                                            <p:confirmDialog global="true" widgetVar="confTypeDialog"  showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                                <p:commandButton value="Yes" type="submit" styleClass="ui-confirmdialog-yes" action="#{typeBean.addNewType()}" onclick="PF('addType').hide(), PF('confTypeDialog').hide()" update="typeBox"/>
+                                            </p:confirmDialog>
+                                        </h:form>
+
+                                    </p:dialog>
+                                </div>
+
+                            </div>
+                            <!--Stock de biere-->
+                            <div class = "grid w-full">
+                                <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Stock de bieres: </div>
+                                </div>
+                                <div class="col">
+                                    <p:spinner id="stockSpinner" styleClass="text-center border-round-sm surface-50 w-9" value="#{articleBean.selectedArticle.stockArticle.stock}" min="0" max="1000000"/>
+                                </div>
+                            </div>
+
+                            <!--pays de biere-->
+                            <div class = "grid w-full">
+                                <div class="col-fixed" style="width: 45%">
+                                    <div class="text-center p-3 border-round-sm surface-ground font-bold">Pays d'origin: </div>
+                                </div>
+                                <div class="col">
+                                    <p:inputText styleClass="text-center p-3 border-round-sm surface-50 w-9" value="#{articleBean.selectedArticle.paysArticle.libelle}"/>
+                                </div>
+                            </div>
+
+
+                            <div class="flex flex-row justify-content-center align-items-center mt-5">
+                                <p:inputText value="#{articleBean.selectedArticle.prixArticle}"
+                                              styleClass="text-4xl font-bold text-center w-8 border-none">
+                                    <f:convertNumber currencySymbol="€" type="currency"/>
+                                </p:inputText>
+                            </div>
                         </div>
                     </p:column>
                 </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Sauvegarder" icon="pi pi-check"
+                                     update="modify-article-content" process="modify-article-content @this">
+                        <p:confirm header="Confirmation" message="Are you sure you want to proceed?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                    <p:commandButton value="Annuler" icon="pi pi-times" onclick="PF('modifyArticleDialog').hide()"
+                                     class="ui-button-secondary" type="button" />
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"/>
+                    </p:confirmDialog>
+                </f:facet>
             </p:dialog>
         </div>
     </ui:define>

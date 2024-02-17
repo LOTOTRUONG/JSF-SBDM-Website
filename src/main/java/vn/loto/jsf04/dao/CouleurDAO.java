@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CouleurDAO extends DAO<Couleur, Couleur, Integer> {
     @Override
@@ -50,24 +51,25 @@ public class CouleurDAO extends DAO<Couleur, Couleur, Integer> {
     }
     @Override
     public boolean update(Couleur couleur) {
-        String sqlRequest = "update COULEUR set NOM_Couleur = ? WHERE id_couleur = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest,Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1,couleur.getNomCouleur());
+        String sqlRequest = "UPDATE COULEUR SET NOM_Couleur = ? WHERE id_couleur = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, couleur.getNomCouleur());
             preparedStatement.setInt(2, couleur.getId());
             preparedStatement.executeUpdate();
             return true;
-        }catch (SQLException E) {
+        } catch (SQLException E) {
             E.printStackTrace();
             return false;
         }
     }
     @Override
     public boolean insert(Couleur couleur) {
-        String sqlRequest = "insert into COULEUR values " + couleur.getNomCouleur();
-        try(Statement statement = connection.createStatement()) {
-            statement.execute(sqlRequest);
+        String sqlRequest = "INSERT INTO COULEUR (NOM_COULEUR) VALUES (?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, couleur.getNomCouleur());
+            preparedStatement.executeUpdate();
             return true;
-        }catch (SQLException E) {
+        } catch (SQLException E) {
             E.printStackTrace();
             return false;
         }
@@ -83,4 +85,26 @@ public class CouleurDAO extends DAO<Couleur, Couleur, Integer> {
             return false;
         }
     }
+    public boolean deleteMultiple(List<Couleur> couleurs) {
+        String sqlRequest = "DELETE FROM COULEUR WHERE ID_COULEUR = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            for (Couleur couleur : couleurs) {
+                preparedStatement.setInt(1, couleur.getId());
+                preparedStatement.addBatch();
+            }
+            int[] deleteCounts = preparedStatement.executeBatch();
+            // Check the result of batch execution
+            for (int deleteCount : deleteCounts) {
+                if (deleteCount != 1) {
+                    // Handle failure to delete
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

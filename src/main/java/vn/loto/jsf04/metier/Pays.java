@@ -1,13 +1,18 @@
 package vn.loto.jsf04.metier;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 public class Pays {
     private Integer id;
     private String libelle;
     private Continent continent;
-    private double latitude;
-    private double longitude;
+
+    @Getter
+    @Setter
+    private Integer countMarque;
 
 
     public Pays()
@@ -28,6 +33,14 @@ public class Pays {
         this.id = id;
         this.libelle = libelle;
         this.continent = continent;
+    }
+
+    public Pays(Integer id, String libelle, Continent continent, int countMarque)
+    {
+        this.id = id;
+        this.libelle = libelle;
+        this.continent = continent;
+        this.countMarque = countMarque;
     }
 
     public Integer getId()
@@ -59,21 +72,7 @@ public class Pays {
     {
         this.continent = continent;
     }
-    public double getLatitude() {
-        return latitude;
-    }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
 
     @Override
     public String toString()

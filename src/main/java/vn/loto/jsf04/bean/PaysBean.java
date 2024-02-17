@@ -9,6 +9,7 @@ import vn.loto.jsf04.metier.Continent;
 import vn.loto.jsf04.metier.Pays;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Named
@@ -20,17 +21,31 @@ public class PaysBean implements Serializable {
 
     private List<Pays> filteredPays;
 
+    private List<Pays> allPaysMarqueContinent;
+
 
     @PostConstruct
     public void init(){
         initialize();
     }
     public List<Pays> getAllPays() {
-        return allPays;
-    }
+       return allPays;  }
 
     public void setAllPays(List<Pays> allPays) {
         this.allPays = allPays;
+    }
+    public List<Pays> getAllPaysMarqueContinent() {
+        filteredPays = new ArrayList<>();
+        for (Pays pay : allPaysMarqueContinent) {
+            if (pay.getId() != 0) { // Exclude entries with ID 0
+                filteredPays.add(pay);
+            }
+        }
+        return filteredPays;
+    }
+
+    public void setAllPaysMarqueContinent(List<Pays> allPaysMarqueContinent) {
+        this.allPaysMarqueContinent = allPaysMarqueContinent;
     }
 
     public Pays getSelectedPay() {
@@ -62,9 +77,14 @@ public class PaysBean implements Serializable {
         if(allPays == null) {
             allPays = DAOFactory.getPaysDAO().getAll();
             allPays.add(0, new Pays(0, "Choisir un pays",new Continent()));
+            filteredPays = allPays;
         }
-
-        filteredPays = allPays;
+        if(allPaysMarqueContinent == null) {
+            allPaysMarqueContinent = DAOFactory.getPaysDAO().getPaysMarqueContinent();
+            allPaysMarqueContinent.add(0, new Pays(0, "Choisir un pays",new Continent()));
+            filteredPays = allPaysMarqueContinent;
+        }
         selectedPay = new Pays();
+
     }
 }

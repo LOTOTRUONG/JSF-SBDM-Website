@@ -2,18 +2,41 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:p="http://primefaces.org/ui">
-
-    <ui:define name="contenu">
-        <div class="card">
-            <h:form prependId="false">
-                <p:gmap id="gmap" center="46.71109, 1.7191036" zoom="5" type="HYBRID"
-                        model="#{inforWindowView.advancedModel}" style="width:100%;height:400px">
-                </p:gmap>
-
-            </h:form>
-        </div>
-
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c ="http://java.sun.com/jsp/jstl/core">
+    <ui:define name="head">
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCvCDkYieuUBmMWon_mfLAfjuaeuosuqow&amp;sensor=false"></script>
     </ui:define>
+    <ui:define name="contenu">
+        <h:form styleClass="flex justify-content-center	align-content-center">
+        <div class="card w-8">
+            <!--Gmaps
+            <p:gmap center="36.890257,30.707417" zoom="13" type="HYBRID" style="width:100%;height:400px" model="#{markersView.simpleModel}" />
+            -->
+            <!--table-->
+            <p:dataTable id="pays" var="pay" value="#{paysBean.allPaysMarqueContinent}" rows="6"
+                         paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="6,12">
+                <p:column headerText="ID de pays" style="width: 20%">
+                        <h:outputText value="#{pay.id}" />
+                </p:column>
 
+                <p:column headerText="Nom de pays" style="width: 30%">
+                    <h:outputText value="#{pay.libelle}" />
+                </p:column>
+
+                <p:column headerText="Nom de continent" style="width: 30%">
+                    <h:outputText value="#{pay.continent.libelle}" />
+                </p:column>
+
+                <p:column headerText="Number de marque" style="width: 30%">
+                    <h:outputText value="#{pay.countMarque}" />
+                </p:column>
+
+            </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
 </ui:composition>

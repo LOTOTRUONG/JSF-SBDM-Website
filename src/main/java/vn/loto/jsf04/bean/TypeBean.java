@@ -2,7 +2,11 @@ package vn.loto.jsf04.bean;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
+import lombok.Getter;
+import lombok.Setter;
 import vn.loto.jsf04.dao.DAOFactory;
 import vn.loto.jsf04.metier.Type;
 
@@ -14,6 +18,9 @@ import java.util.List;
 public class TypeBean implements Serializable {
     private List<Type> allTypes;
     private Type selectedType;
+    @Getter
+    @Setter
+    private String libelle;
     @PostConstruct
     public void init(){
         if (allTypes == null){
@@ -36,5 +43,24 @@ public class TypeBean implements Serializable {
     public void setSelectedType(Type selectedType) {
         this.selectedType = selectedType;
     }
+    public void addNewType() {
+        if (libelle != null && !libelle.isEmpty()) {
+            Type newType = new Type(this.libelle);
+            DAOFactory.getTypeDAO().insert(newType);
 
+            // Update the list of colors after adding the new color
+            allTypes = DAOFactory.getTypeDAO().getAll();
+            allTypes.add(0, new Type(0, "Choisir une Type"));
+
+            // Clear the input field after adding the color
+            libelle = null;
+
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Type added successfully");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Type name cannot be empty");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+
+    }
 }

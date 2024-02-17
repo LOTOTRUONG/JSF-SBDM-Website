@@ -21,17 +21,24 @@ public class PaysDAO extends DAO<Pays, Continent, Integer> {
             return null;
         }
     }
-    public Pays getByLibelle(String libelle) {
-        String sqlRequest = "Select id_pays, nom_pays from PAYS where nom_pays = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
-            preparedStatement.setString(1, libelle);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) return new Pays(resultSet.getInt(1),resultSet.getString(2));
-            return null;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    public ArrayList<Pays> getPaysMarqueContinent(){
+        String sqlRequest = "{Call ps_PaysWithMarque}";
+        ArrayList <Pays> liste = new ArrayList<>();
+        try(CallableStatement callableStatement = connection.prepareCall(sqlRequest)) {
+            ResultSet resultSet = callableStatement.executeQuery();
+            while (resultSet.next()){
+                Pays pay = new Pays(resultSet.getInt("ID_PAYS"), resultSet.getString("NOM_PAYS"));
+                Continent continent = new Continent();
+                continent.setLibelle(resultSet.getString("NOM_CONTINENT"));
+                pay.setContinent(continent);
+                pay.setCountMarque(resultSet.getInt("NUMBER_MARQUE"));
+                liste.add(pay);
+            }
+            resultSet.close();
+        } catch (Exception exception){
+            exception.printStackTrace();
         }
+        return liste;
     }
     @Override
     public ArrayList<Pays> getAll() {
@@ -79,7 +86,7 @@ public class PaysDAO extends DAO<Pays, Continent, Integer> {
 
 
     @Override
-    public boolean insert(Pays object) {
+    public boolean update(Pays object) {
         String sqlRequest = "update PAYS set NOM_PAYS = ? WHERE ID_PAYS = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest,Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, object.getLibelle());
@@ -93,7 +100,7 @@ public class PaysDAO extends DAO<Pays, Continent, Integer> {
     }
 
     @Override
-    public boolean update(Pays object) {
+    public boolean insert(Pays object) {
         String sqlRequest = "insert into PAYS values " + object.getLibelle();
         try(Statement statement = connection.createStatement()) {
             statement.execute(sqlRequest);

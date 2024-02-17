@@ -1,0 +1,136 @@
+<ui:composition template="../template/Layout.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="contenu">
+        <div class="card">
+            <h:form styleClass="my-4">
+                <p:growl id="message" showDetail="true" skipDetailIfEqualsSummary="true"/>
+                <p:tagCloud model="#{couleurBean.model}" styleClass="marginAuto width50 border-circle">
+                    <p:ajax event="select" update="message" listener="#{couleurBean.couleurChanged}"/>
+                </p:tagCloud>
+            </h:form>
+
+            <h:form id="modifyCouleur" styleClass="w-8 m-auto">
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{couleurBean.openNew}"
+                                         update=":dialogs:add-color-content" oncomplete="PF('addColorDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:add-color-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-color-button" value="#{couleurBean.deleteButtonMessage}"
+                                         icon="pi pi-trash" actionListener="#{couleurBean.deleteSelectedColor}"
+                                         styleClass="ui-button-danger" disabled="#{!couleurBean.hasSelectedColor()}" update="@this">
+                            <p:confirm header="Confirmation" message="Delete the selected products?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:fileUpload mode="simple" skinSimple="true" label="Import" chooseIcon="pi pi-download" />
+                        <p:commandButton value="Export" icon="pi pi-upload" styleClass="ui-button-help" ajax="false">
+                            <p:dataExporter type="pdf" target="couleurs" fileName="products" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="couleurs" var="couleur" value="#{couleurBean.filteredCouleur}" reflow="true" styleClass="products-table" selection="#{couleurBean.selectedColeurs}"
+                paginator="true" rows="5" rowSelectMode="add" paginatorPosition="bottom" rowKey="#{couleur.id}">
+
+                    <p:ajax event="rowSelect" update=":modifyCouleur:delete-color-button" />
+                    <p:ajax event="rowUnselect" update=":modifyCouleur:delete-color-button" />
+                    <p:ajax event="rowSelectCheckbox" update=":modifyCouleur:delete-color-button" />
+                    <p:ajax event="rowUnselectCheckbox" update=":modifyCouleur:delete-color-button" />
+                    <p:ajax event="toggleSelect" update=":modifyCouleur:delete-color-button" />
+
+                    <p:column selectionMode="multiple" exportable="false" styleClass="text-center"/>
+
+                    <p:column headerText="ID COULEUR" style="width: 15%" styleClass="text-center">
+                        <h:outputText value="#{couleur.id}" styleClass="text-center	"/>
+                    </p:column>
+                    <p:column headerText="NOM COULEUR" style="width: 50%" styleClass="text-center">
+                        <h:outputText value="#{couleur.nomCouleur}" styleClass="text-center	">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column exportable="false"  headerText="Check" style="width: 15%" styleClass="text-center	">
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-color-content"
+                                         oncomplete="PF('manageColorDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success mx-2" process="@this">
+                            <f:setPropertyActionListener value="#{couleur}" target="#{couleurBean.selectedCouleur}" />
+                            <p:resetInput target=":dialogs:manage-color-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button mx-2" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteColorDialog').show()">
+                            <f:setPropertyActionListener value="#{couleur}" target="#{couleurBean.selectedCouleur}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Color Details" showEffect="fade" modal="true" widgetVar="manageColorDialog"
+                          responsive="true">
+                    <p:outputPanel id="manage-color-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty couleurBean.selectedCouleur}">
+                            <div class="field">
+                                <p:outputLabel for="name">Name</p:outputLabel>
+                                <p:inputText id="name" value="#{couleurBean.selectedCouleur.nomCouleur}" required="true" />
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{couleurBean.updateColor()}"
+                                         update="manage-color-content" process="manage-color-content @this">
+
+                        </p:commandButton>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageColorDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+
+
+                </p:dialog>
+
+                <p:dialog header="Add Color" showEffect="fade" modal="true" widgetVar="addColorDialog"
+                          responsive="true">
+                    <p:outputPanel id="add-color-content" class="ui-fluid">
+                            <div class="field">
+                                <p:outputLabel for="nameColor">Name</p:outputLabel>
+                                <p:inputText id="nameColor" value="#{couleurBean.nomCouleur}" required="true" />
+                            </div>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{couleurBean.addNewColor()}"
+                                         update="add-color-content" process="add-color-content @this">
+                        </p:commandButton>
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('addColorDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+
+                </p:dialog>
+
+
+                <p:confirmDialog widgetVar="deleteColorDialog" showEffect="fade" width="300"
+                                 message="Delete the product?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{couleurBean.deleteColor}"
+                                     process="@this"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteColorDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

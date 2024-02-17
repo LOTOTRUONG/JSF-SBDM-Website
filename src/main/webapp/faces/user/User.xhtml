@@ -1,0 +1,49 @@
+<ui:composition template="../template/Layout.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="contenu">
+        <div class="card flex flex-column flex-nowrap justify-content-center align-items-center" style="min-width: 60em;">
+            <h:graphicImage library="img" name="user.png" styleClass="w-2"/>
+            <h:outputLabel value="Bienvenue sur la page d'user" styleClass="mb-2 py-2 uppercase text-3xl text-red-500 font-bold"/>
+            <h1>Bonjour #{loginBean.utilisateurBean.username}</h1>
+
+            <div class="mb-2 flex flex-row justify-content-center align-items-center">
+                <h:graphicImage library="img" name="modifyUser.png" styleClass="w-2rem"/>
+                <h:outputLabel value="Modify votre mot de passe" styleClass="py-2"/>
+            </div>
+            <h:form id="modifyForm" styleClass="text-center w-9 my-4">
+                <div class = "grid flex-nowrap justify-content-center align-items-center">
+                    <div class="col-fixed" style="width: 45%">
+                        <p:outputLabel for="oldPassword" styleClass="text-center p-3 border-round-sm font-bold" value="Mot de passe actuel:"/>
+                    </div>
+                    <div class="col">
+                        <p:password id="oldPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.oldPassword}" required="true"/>
+                    </div>
+                </div>
+                <div class = "grid flex-nowrap justify-content-center align-items-center">
+                    <div class="col-fixed" style="width: 45%">
+                        <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Nouveau mot de passe:"/>
+                    </div>
+                    <div class="col">
+                        <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.newPassword}" required="true"/>
+                    </div>
+                </div>
+
+                <div class = "grid flex-nowrap justify-content-center align-items-center">
+                    <div class="col-fixed" style="width: 45%">
+                        <p:outputLabel for="confirmPassword" styleClass="text-center p-3 border-round-sm font-bold" value="Verifier mot de passe:"/>
+                    </div>
+                    <div class="col">
+                        <p:password id="confirmPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.confirmPassword}" required="true"/>
+                    </div>
+                </div>
+
+                    <!-- Modify button -->
+                    <p:commandButton type="submit" value="Modify" action="#{utilisateurBean.changePassword()}" ajax="false" styleClass="my-4"/>
+
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

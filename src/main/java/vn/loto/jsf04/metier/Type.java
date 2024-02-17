@@ -15,6 +15,12 @@ public class Type {
         this.libelle = libelle;
     }
 
+    public Type(String libelle)
+    {
+        this.libelle = libelle;
+    }
+
+
 
     public Integer getId()
     {
