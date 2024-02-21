@@ -1,13 +1,10 @@
 package vn.loto.jsf04.dao;
 
-import vn.loto.jsf04.metier.Roles;
-import vn.loto.jsf04.metier.Utilisateur;
+import vn.loto.jsf04.metier.*;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
     @Override
@@ -17,14 +14,19 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
     @Override
     public ArrayList<Utilisateur> getAll() {
         ArrayList<Utilisateur> utilisateurs = new ArrayList<>();
-        String query = "SELECT * FROM UTILISATEUR";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-            while (resultSet.next()) {
-                utilisateurs.add(new Utilisateur(resultSet.getString(1), resultSet.getString(2)));
+        String query = "{Call ps_UserWithRole}";
+        try(CallableStatement callableStatement = connection.prepareCall(query)) {
+            ResultSet resultSet = callableStatement.executeQuery();
+            while (resultSet.next()){
+                Utilisateur utilisateur = new Utilisateur(resultSet.getString("NOM_UTILISATEUR"), resultSet.getString("PASSWORD"));
+                Roles roles = new Roles();
+                roles.setName(resultSet.getString("NOM_ROLE"));
+                utilisateur.setRoleUser(roles);
+                utilisateurs.add(utilisateur);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            resultSet.close();
+        } catch (Exception exception){
+            exception.printStackTrace();
         }
         return utilisateurs;
     }
@@ -57,7 +59,7 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
 
     @Override
     public boolean insert(Utilisateur utilisateur) {
-        String query = "INSERT INTO utilisateur (NOM_UTILISATEUR, PASSWORD, ID_ROLE) VALUES (?, ?, ?)";
+        String query = "INSERT INTO UTILISATEUR (NOM_UTILISATEUR, PASSWORD, ID_ROLE) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, utilisateur.getUsername());
             preparedStatement.setString(2, utilisateur.getPassword());
@@ -84,9 +86,33 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
         }
     }
 
+    public boolean updateUsernameRole(Utilisateur updateUtilisateur){
+        String updateQuery = "{CALL ps_updateUsernameRole(?,?,?)}";
+        try (CallableStatement callableStatement = connection.prepareCall(updateQuery)) {
+            callableStatement.setString(1, updateUtilisateur.getUsername());
+            callableStatement.setInt(2, updateUtilisateur.getRoleUser().getId());
+            callableStatement.setString(3, updateUtilisateur.getRoleUser().getName());
+            int rowsUpdated = callableStatement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
     @Override
     public boolean delete(Utilisateur object) {
-        return false;
+        String sqlRequest = "Delete from UTILISATEUR WHERE NOM_UTILISATEUR = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, object.getUsername());
+            preparedStatement.executeUpdate();
+            return true;
+        }catch (SQLException E) {
+            return false;
+        }
     }
 
 

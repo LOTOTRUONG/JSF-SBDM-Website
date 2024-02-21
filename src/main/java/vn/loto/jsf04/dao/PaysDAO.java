@@ -21,7 +21,8 @@ public class PaysDAO extends DAO<Pays, Continent, Integer> {
             return null;
         }
     }
-    public ArrayList<Pays> getPaysMarqueContinent(){
+    @Override
+    public ArrayList<Pays> getAll() {
         String sqlRequest = "{Call ps_PaysWithMarque}";
         ArrayList <Pays> liste = new ArrayList<>();
         try(CallableStatement callableStatement = connection.prepareCall(sqlRequest)) {
@@ -40,31 +41,28 @@ public class PaysDAO extends DAO<Pays, Continent, Integer> {
         }
         return liste;
     }
+
     @Override
-    public ArrayList<Pays> getAll() {
+    public ArrayList<Pays> getLike(Continent continent) {
         ArrayList<Pays> liste = new ArrayList<>();
-        String sqlRequest = "SELECT ID_Pays, NOM_Pays FROM Pays";
-        try(Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sqlRequest);
+        String sqlCommand = "SELECT ID_PAYS, NOM_PAYS, CONTINENT.NOM_CONTINENT FROM PAYS " +
+                "JOIN CONTINENT ON CONTINENT.ID_CONTINENT = PAYS.ID_CONTINENT WHERE PAYS.ID_CONTINENT = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
+            preparedStatement.setInt(1, continent.getId());
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                liste.add(new Pays(resultSet.getInt(1),resultSet.getString(2)));
-            } resultSet.close();
-        } catch (Exception e) {
+                int idPays = resultSet.getInt("ID_PAYS");
+                String nomPays = resultSet.getString("NOM_PAYS");
+                liste.add(new Pays(idPays, nomPays, continent));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return liste;
     }
 
-    @Override
-    public ArrayList<Pays> getLike(Continent continent) {
-        if (continent.getId() == 0) {
-            return getAll();
-        } else {
-            return getAllPaysInContinent(continent.getId());
-        }
-    }
-
-    private ArrayList<Pays> getAllPaysInContinent(int continentId) {
+    public ArrayList<Pays> getAllPaysInContinent(int continentId) {
         ArrayList<Pays> liste = new ArrayList<>();
         String sqlCommand = "SELECT ID_PAYS, NOM_PAYS FROM PAYS WHERE ID_CONTINENT = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {

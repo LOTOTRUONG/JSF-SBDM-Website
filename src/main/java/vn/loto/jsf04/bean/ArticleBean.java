@@ -1,29 +1,30 @@
 package vn.loto.jsf04.bean;
 
+import com.lowagie.text.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import vn.loto.jsf04.dao.DAOFactory;
 import vn.loto.jsf04.metier.*;
-import vn.loto.jsf04.metier.SubMetier.Volume;
+import vn.loto.jsf04.service.PrintDocumentView;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Named
-@SessionScoped
+@ViewScoped
 
 public class ArticleBean  implements Serializable {
-    private String nameSearch;
     private List<Article> allArticle;
     private Article selectedArticle;
     private ArticleSearch articleSearch;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         initialize();
     }
 
@@ -53,21 +54,16 @@ public class ArticleBean  implements Serializable {
     }
 
 
-    public String getNameSearch() {
-        return nameSearch;
-    }
-    public void setNameSearch(String nameSearch) {
-        this.nameSearch = nameSearch;
-    }
 
 
-
-    private List<Volume> extractVolumeOptions(List<Article> articles) {
-        Set<Integer> volumeSet = new HashSet<>();
-        for (Article article : articles) {
-            volumeSet.add(article.getVolumeArticle().getVolume());
+    public List<Article> completeArticle(String query) {
+        List<Article> filteredArticles = new ArrayList<>();
+        for (Article article : allArticle) {
+            if (article.getNomArticle().toLowerCase().contains(query.toLowerCase())) {
+                filteredArticles.add(article);
+            }
         }
-        return volumeSet.stream().map(Volume::new).collect(Collectors.toList());
+        return filteredArticles;
     }
 
     public void search() {
@@ -75,15 +71,13 @@ public class ArticleBean  implements Serializable {
             allArticle = DAOFactory.getArticleDAO().getLike(articleSearch);
         } catch (Exception e) {
             e.printStackTrace();
-        }    }
-
-
-
+        }
+    }
 
     public void initialize() {
-        allArticle = DAOFactory.getArticleDAO().getAll();
         articleSearch = new ArticleSearch();
-        selectedArticle = new Article(0, "");
+        allArticle = DAOFactory.getArticleDAO().getLike(articleSearch);
+        selectedArticle = new Article();
     }
 
 }

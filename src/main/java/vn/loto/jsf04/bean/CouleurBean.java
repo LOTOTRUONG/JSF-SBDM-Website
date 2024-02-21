@@ -1,6 +1,7 @@
 package vn.loto.jsf04.bean;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -37,7 +38,6 @@ public class CouleurBean implements Serializable {
     @Setter
     private String nomCouleur;
     private TagCloudModel model;
-    private boolean addNew = false;
 
     @PostConstruct
     public void init(){
@@ -46,6 +46,8 @@ public class CouleurBean implements Serializable {
             allCouleurs = DAOFactory.getCouleurDAO().getAll();
             allCouleurs.add(0, new Couleur(0, "Choisir un couleur"));
         }
+
+        selectedCouleur = new Couleur();
 
         if (filteredCouleur == null){
             filteredCouleur = DAOFactory.getCouleurDAO().getAll();
@@ -112,6 +114,7 @@ public class CouleurBean implements Serializable {
         if (selectedCouleur != null) {
             filteredCouleur.remove(selectedCouleur);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Color Removed"));
+            //PrimeFaces.current().executeScript("PF('deleteColorDialog').hide()");
             PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
             DAOFactory.getCouleurDAO().delete(selectedCouleur);
         }
@@ -124,9 +127,10 @@ public class CouleurBean implements Serializable {
         if (success) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Colors Removed"));
             // Update the list of colors after deletion
-            filteredCouleur.removeAll(selectedColeurs);
-            PrimeFaces.current().executeScript("PF('deleteColorDialog').hide()");
-            PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
+            this.filteredCouleur.removeAll(this.selectedColeurs);
+            selectedColeurs = null;
+            PrimeFaces.current().executeScript("PF('dtCouleurs').clearFilteres()");
+           PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
 
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Failed to delete colors"));
@@ -141,8 +145,8 @@ public class CouleurBean implements Serializable {
         if (selectedCouleur != null) {
             if (DAOFactory.getCouleurDAO().update(selectedCouleur)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Color updated successfully"));
-                PrimeFaces.current().executeScript("PF('manageColorDialog').hide()");
-                PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
+               PrimeFaces.current().executeScript("PF('manageColorDialog').hide()");
+               PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Failed to update color"));
             }
@@ -154,6 +158,15 @@ public class CouleurBean implements Serializable {
 
     public void addNewColor() {
         if (nomCouleur != null && !nomCouleur.isEmpty()) {
+            // Check if the color name already exists
+            boolean colorExists = allCouleurs.stream()
+                    .anyMatch(couleur -> couleur.getNomCouleur().equalsIgnoreCase(nomCouleur));
+
+            if (colorExists) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Color name already exists"));
+                PrimeFaces.current().ajax().update("modifyCouleur:messages");
+                return; // Exit the method if color name already exists
+            }
             Couleur newCouleur = new Couleur(this.nomCouleur);
             DAOFactory.getCouleurDAO().insert(newCouleur);
 
@@ -165,8 +178,8 @@ public class CouleurBean implements Serializable {
             nomCouleur = null;
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Color added successfully"));
-            PrimeFaces.current().executeScript("PF('addColorDialog').hide()");
-            PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
+           PrimeFaces.current().executeScript("PF('addColorDialog').hide()");
+           PrimeFaces.current().ajax().update("modifyCouleur:messages", "modifyCouleur:couleurs");
 
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Color name cannot be empty"));
@@ -174,26 +187,5 @@ public class CouleurBean implements Serializable {
 
     }
 
-
-//    public void insertColor(){
-//        boolean isUpdated;
-//        String messageDetail;
-//
-//        if (addNew){
-//            isUpdated = DAOFactory.getCouleurDAO().insert(selectedCouleur);
-//        }
-//        else {
-//            isUpdated = DAOFactory.getCouleurDAO().update(selectedCouleur);
-//        }
-//
-//        if(isUpdated){
-//            Messenger.addMessage(FacesMessage.SEVERITY_INFO, "Message", "L'article a été ajouté/modifié.");
-//        }
-//        else {
-//            Messenger.addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Impossible d'ajouter/modifier cet article. Veuillez réessayer.");
-//        }
-//        PrimeFaces.current().executeScript("PF('addCouleur').hide()");
-//        PrimeFaces.current().ajax().update("colorBox","messages");
-//    }
 
 }

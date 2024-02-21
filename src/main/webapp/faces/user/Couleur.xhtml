@@ -4,7 +4,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="contenu">
-        <div class="card">
+        <div class="card my-4">
             <h:form styleClass="my-4">
                 <p:growl id="message" showDetail="true" skipDetailIfEqualsSummary="true"/>
                 <p:tagCloud model="#{couleurBean.model}" styleClass="marginAuto width50 border-circle">
@@ -23,7 +23,7 @@
                             <p:resetInput target=":dialogs:add-color-content" />
                         </p:commandButton>
                         <p:commandButton id="delete-color-button" value="#{couleurBean.deleteButtonMessage}"
-                                         icon="pi pi-trash" actionListener="#{couleurBean.deleteSelectedColor}"
+                                         icon="pi pi-trash" actionListener="#{couleurBean.deleteSelectedColor()}"
                                          styleClass="ui-button-danger" disabled="#{!couleurBean.hasSelectedColor()}" update="@this">
                             <p:confirm header="Confirmation" message="Delete the selected products?"
                                        icon="pi pi-exclamation-triangle" />
@@ -37,7 +37,7 @@
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable id="couleurs" var="couleur" value="#{couleurBean.filteredCouleur}" reflow="true" styleClass="products-table" selection="#{couleurBean.selectedColeurs}"
+                <p:dataTable id="couleurs" widgetVar="dtCouleurs" var="couleur" value="#{couleurBean.filteredCouleur}" reflow="true" selection="#{couleurBean.selectedColeurs}"
                 paginator="true" rows="5" rowSelectMode="add" paginatorPosition="bottom" rowKey="#{couleur.id}">
 
                     <p:ajax event="rowSelect" update=":modifyCouleur:delete-color-button" />
@@ -108,7 +108,9 @@
 
                     <f:facet name="footer">
                         <p:commandButton value="Save" icon="pi pi-check" actionListener="#{couleurBean.addNewColor()}"
-                                         update="add-color-content" process="add-color-content @this">
+                                         update="add-color-content modifyCouleur:couleurs" process="add-color-content @this">
+                            <p:confirm header="Confirmation" message="Add new article?"/>
+
                         </p:commandButton>
                         <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('addColorDialog').hide()"
                                          class="ui-button-secondary" type="button" />
@@ -120,7 +122,7 @@
                 <p:confirmDialog widgetVar="deleteColorDialog" showEffect="fade" width="300"
                                  message="Delete the product?" header="Confirm" severity="warn">
                     <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{couleurBean.deleteColor}"
-                                     process="@this"/>
+                                     process="@this" onclick="PF('deleteColorDialog').hide()"/>
                     <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                      onclick="PF('deleteColorDialog').hide()" />
                 </p:confirmDialog>

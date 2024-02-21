@@ -82,14 +82,14 @@ public class MyLoginModule implements LoginModule {
             Utilisateur users = DAOFactory.getUtilisateurDAO().getByUsername(username);
 
             if (utilisateur.getUsername().equals(users.getUsername()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
-                if ("admin".equals(users.getRoles().getName())) {
+                if ("admin".equals(users.getRoleUser().getName())) {
                     // Add all role names to userGroups if the user is an admin
                     List<Roles> roles = DAOFactory.getRolesDAO().getAll(); // Assuming you have a method to retrieve all roles
                     for (Roles role : roles) {
                         userGroups.add(role.getName());
                     }
                 } else {
-                    userGroups.add(users.getRoles().getName());
+                    userGroups.add(users.getRoleUser().getName());
                 }
                 isAuthenticated = true;
                 return true;

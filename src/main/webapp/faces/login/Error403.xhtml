@@ -1,0 +1,16 @@
+<ui:composition template="../template/Layout.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+   <ui:define name="contenu">
+      <div class="card flex flex-column justify-content-center align-items-center">
+         <h:form styleClass="flex flex-column justify-content-center align-items-center my-5 mx-5">
+            <h:graphicImage library="img" name="stop.png" styleClass="w-6 opacity-70"/>
+            <h:outputLabel value="Vous n'avez pas la permission d'accéder à cette page" styleClass= "my-5 uppercase text-red-500 font-bold text-2xl"/>
+            <h:outputLabel value="Veuillez choisir une autre page ou vous déconnecter" styleClass=" mb-5 font-semibold font-italic text-lg text-600"/>
+            <p:commandButton value="Logout" action="#{firstPageBean.logout()}" ajax="false" type="submit" styleClass="text-center rounded-button ui-button-danger"/>
+         </h:form>
+      </div>
+   </ui:define>
+</ui:composition>

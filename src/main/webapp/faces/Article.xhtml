@@ -4,7 +4,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="contenu">
-        <div class="card">
+        <div class="card my-4">
             <div id="article_view">
 
                 <p:dataTable id="articles" var="article" value="#{articleBean.allArticle}" emptyMessage="No Article found with this criteria"
@@ -74,26 +74,30 @@
                                     <p:row>
                                         <p:column>
                                             <div style="width: 100%">
-                                                <p:selectOneMenu id="search_marque" value="#{articleBean.articleSearch.marque}"
-                                                                 var="marque"
+                                                <p:selectOneMenu id="search_fabricant" value="#{articleBean.articleSearch.fabricant}"
+                                                                 var="fabricant"
                                                                  filter="true"
                                                                  filterMatchMode="startsWith"
                                                                  filterNormalize="true"
                                                                  style="width: 100%">
 
-                                                    <f:selectItems value="#{marqueBean.allMarques}"/>
-                                                    <f:converter converterId="marqueConverter"/>
+                                                    <f:selectItems value="#{fabricantBean.filteredFabricant}"/>
+                                                    <f:converter converterId="fabricantConverter"/>
 
                                                     <p:column style="width:10%">
-                                                        <span style="width: 30px; height: 20px">#{marque.id}</span>
+                                                        <span style="width: 30px; height: 20px">#{fabricant.id}</span>
                                                     </p:column>
 
                                                     <p:column>
                                                         <f:facet name="header">
-                                                            <h:outputText value="Nom Marque"/>
+                                                            <h:outputText value="Nom Fabricant"/>
                                                         </f:facet>
-                                                        <h:outputText value="#{marque.libelle}"/>
+                                                        <h:outputText value="#{fabricant.nomFabricant}"/>
                                                     </p:column>
+                                                    <f:facet name="footer">
+                                                        <h:outputText value="#{fabricantBean.filteredFabricant.size() - 1} marques"
+                                                                      style="font-weight:bold;" styleClass="py-1 block"/>
+                                                    </f:facet>
                                                 </p:selectOneMenu>
                                             </div>
                                         </p:column>
@@ -102,7 +106,7 @@
                                             <div style="width: 100%">
                                                 <p:selectOneMenu id="search_continent" value="#{articleBean.articleSearch.continent}"
                                                                  style="width: 100%" label="Choisir un Continent">
-                                                    <p:ajax listener="#{paysBean.onContinentChange(articleBean.articleSearch.continent)}" update="search_pays"/>
+                                                    <f:ajax listener="#{paysBean.onContinentChange(articleBean.articleSearch.continent)}" render="search_pays"/>
                                                     <f:selectItems value="#{continentBean.filteredContinents}"/>
                                                     <f:converter converterId="continentConverter"/>
                                                     <f:facet name="footer">
@@ -180,29 +184,28 @@
                     </f:facet>
 
                     <p:column headerText="ID ARTICLE" sortBy="#{article.idArticle}" style="width: 10%!important;">
-                        <h:outputText value="#{article.idArticle}" />
+                        <h:outputText value="#{article.idArticle}" styleClass="vertical-align-middle ml-2"/>
                     </p:column>
                     <p:column headerText="NOM ARTICLE" style="width: 25%!important;">
-                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.nomArticle}" />
+                        <h:outputText styleClass="vertical-align-middle ml-2" value="#{article.nomArticle}" />
                     </p:column>
 
                     <p:column headerText="VOLUMNE" style="width: 8%!important;">
-                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.volumeArticle.volume}" />
+                        <h:outputText styleClass="vertical-align-middle ml-2" value="#{article.volumeArticle.volume}" />
                     </p:column>
 
-                    <p:column headerText="TITRAGE"  style="width: 12%!important;">
-                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.titrageArticle.titrage}" />
+                    <p:column headerText="PAYS D'ORIGIN"  style="width: 12%!important;">
+                        <h:outputText styleClass="vertical-align-middle ml-2 capitalize" value="#{article.paysArticle.libelle}" />
                     </p:column>
 
-                    <p:column headerText="PRIX D'ACHAT"  style="width: 8%!important;">
-                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.prixArticle}" />
+                    <p:column headerText="PRIX D'ACHAT"  style="width: 10%!important;" sortBy="#{article.prixArticle}">
+                        <h:outputText styleClass="vertical-align-middle ml-2" value="#{article.prixArticle}" />
                     </p:column>
                     <p:column headerText="STOCK" style="width: 8%!important;">
-                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.stockArticle}" />
+                        <h:outputText styleClass="vertical-align-middle ml-2" value="#{article.stockArticle}" />
                     </p:column>
-
                     <!--button to see detail article-->
-                    <p:column style="width:3rem;text-align: center" headerText="DETAIL">
+                    <p:column style="width:3rem;text-align: center" headerText="DETAIL" exportable="false">
                         <p:commandButton update="articleDetail" oncomplete="PF('articleDialog').show()"
                                          icon="pi pi-search" title="View">
                             <f:setPropertyActionListener value="#{article}"
@@ -213,8 +216,12 @@
 
                     <!--print button-->
                     <f:facet name="paginatorBottomRight">
-                                <p:commandButton id="printPage" value="Print" type="button" icon="pi pi-print" styleClass="shadow-1 mb-3">
-                                    <p:printer target="articles" configuration="globalStyles: true, title: 'Nature Image Header', timeout: 1000"/>
+                                <p:commandButton id="printPage" value="Print" type="button" icon="pi pi-print" styleClass="shadow-1 mb-3 mx-3">
+                                    <p:printer target="articles" configuration="globalStyles: true, title: 'ALL ARTICLES', timeout: 1000"/>
+                                </p:commandButton>
+
+                                <p:commandButton value="Export PDF" styleClass="shadow-1 mb-3 mx-3" icon="pi pi-print">
+                                    <p:dataExporter type="pdf" target="articles" fileName="ALL ARTICLES" preProcessor="#{printDocumentView.preProcessPDF}" options="#{printDocumentView.pdfOpt}"/>
                                 </p:commandButton>
                     </f:facet>
                 </p:dataTable>
@@ -223,11 +230,11 @@
 
             <!--detail article-->
             <p:dialog header="DETAIL INFORMATION DE BIERES" widgetVar="articleDialog" modal="true" showEffect="fade"
-                      hideEffect="fade" resizable="false"  closeOnEscape="true">
+                      hideEffect="fade" resizable="false"  closeOnEscape="true" >
                 <p:outputPanel id="articleDetail" styleClass="text-center">
                     <p:column rendered="#{not empty articleBean.selectedArticle}">
                         <div class="article">
-                            <div class="article-grid-item flex flex-row justify-content-center align-items-center mb-0 py-5">
+                            <div class="article-grid-item flex flex-row justify-content-center align-items-center mb-0 py-3">
                                 <h:graphicImage library="img" name="brand.png" style="width: 5%"/>
                                 <h:outputText value="#{articleBean.selectedArticle.marqueArticle.libelle}" styleClass="uppercase text-xl text-orange-600 font-bold"/>
                             </div>
@@ -274,7 +281,7 @@
                                     <!--pays de biere-->
                                     <div class = "grid">
                                         <div class="col-fixed" style="width: 40%">
-                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Pays d'origin: </div>
+                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Pay d'origin: </div>
                                         </div>
                                         <div class="col">
                                             <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.paysArticle.libelle}</div>
@@ -291,6 +298,13 @@
                         </div>
                     </p:column>
                 </p:outputPanel>
+                <div class="flex flex-row justify-content-center align-items-center my-6">
+                    <p:commandButton id="printDetailArticle" value="Print" type="button" icon="pi pi-print" styleClass="rounded-button shadow-1 mx-3 w-8rem">
+                        <p:printer target="articleDetail" configuration="globalStyles: true, title: 'Article Detail for #{articleBean.selectedArticle.nomArticle}', timeout: 1000"/>
+                    </p:commandButton>
+
+                    <p:commandButton id="cancelDetailArticle" value="Cancel" type="button" icon="pi pi-times" styleClass="rounded-button ui-button-secondary shadow-1 mx-3 w-8rem" onclick="PF('articleDialog').hide()"/>
+                </div>
             </p:dialog>
         </div>
     </ui:define>

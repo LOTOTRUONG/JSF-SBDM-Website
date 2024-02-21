@@ -1,24 +1,36 @@
 package vn.loto.jsf04.metier;
 
+import lombok.Getter;
+import lombok.Setter;
 import vn.loto.jsf04.metier.SubMetier.Stock;
 import vn.loto.jsf04.metier.SubMetier.Titrage;
 import vn.loto.jsf04.metier.SubMetier.Volume;
 
 public class ArticleSearch {
+    @Getter @Setter
     private int id ;
+    @Getter @Setter
     private String libelle = "";
     private Titrage titrageMin = new Titrage(0F);
     private Titrage titrageMax = new Titrage(30F);
-
+    @Getter @Setter
     private Volume volume = new Volume();
-
+    @Getter @Setter
     private Stock stock=new Stock();
+    @Getter @Setter
     private Float prix;
+
+    @Getter @Setter
     private Pays pays = new Pays();
+    @Getter @Setter
     private Continent continent = new Continent();
+    @Getter @Setter
     private Couleur couleur = new Couleur();
+    @Getter @Setter
     private Type typeBiere = new Type();
+    @Getter @Setter
     private Marque marque = new Marque();
+    @Getter @Setter
     private Fabricant fabricant = new Fabricant();
 
     public Titrage getTitrageMin() {
@@ -35,93 +47,6 @@ public class ArticleSearch {
 
     public void setTitrageMax(Titrage titrageMax) {
         this.titrageMax = titrageMax;
-    }
-
-    public Volume getVolume() {
-        return volume;
-    }
-
-    public void setVolumne(Volume volume) {
-        this.volume = volume;
-    }
-    public Stock getStock() {
-        return stock;
-    }
-
-    public void setStock(Stock stock) {
-        this.stock = stock;
-    }
-
-    public Float getPrix() {
-        return prix;
-    }
-
-    public void setPrix(Float prix) {
-        this.prix = prix;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getLibelle() {
-        return libelle;
-    }
-
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
-    }
-
-    public Pays getPays() {
-        return pays;
-    }
-
-    public void setPays(Pays pays) {
-        this.pays = pays;
-    }
-
-    public Continent getContinent() {
-        return continent;
-    }
-
-    public void setContinent(Continent continent) {
-        this.continent = continent;
-    }
-
-    public Couleur getCouleur() {
-        return couleur;
-    }
-
-    public void setCouleur(Couleur couleur) {
-        this.couleur = couleur;
-    }
-
-    public Type getTypeBiere() {
-        return typeBiere;
-    }
-
-    public void setTypeBiere(Type typeBiere) {
-        this.typeBiere = typeBiere;
-    }
-
-    public Marque getMarque() {
-        return marque;
-    }
-
-    public void setMarque(Marque marque) {
-        this.marque = marque;
-    }
-
-    public Fabricant getFabricant() {
-        return fabricant;
-    }
-
-    public void setFabricant(Fabricant fabricant) {
-        this.fabricant = fabricant;
     }
 
 }

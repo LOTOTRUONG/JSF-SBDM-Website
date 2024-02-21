@@ -2,11 +2,10 @@ package vn.loto.jsf04.dao;
 
 import vn.loto.jsf04.metier.Continent;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ContinentDAO extends DAO<Continent, Continent, Integer> {
     @Override
@@ -97,6 +96,23 @@ public ArrayList<Continent> getAll(){
         }
     }
 
+    public Map<String, Double> getContinentMarqueData() {
+        Map<String, Double> continentMarqueData = new HashMap<>();
+        String sqlRequest = "{call ps_ContinentWithMarque}";
+
+        try (CallableStatement statement = connection.prepareCall(sqlRequest);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                String continentName = resultSet.getString("NOM_CONTINENT");
+                double percentageMarque = resultSet.getDouble("PERCENTAGE_MARQUE");
+                continentMarqueData.put(continentName, percentageMarque);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return continentMarqueData;
+    }
 
 
 }

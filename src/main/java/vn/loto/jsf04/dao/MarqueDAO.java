@@ -1,5 +1,7 @@
 package vn.loto.jsf04.dao;
 
+import vn.loto.jsf04.metier.Continent;
+import vn.loto.jsf04.metier.Fabricant;
 import vn.loto.jsf04.metier.Marque;
 import vn.loto.jsf04.metier.Pays;
 
@@ -25,43 +27,52 @@ public class MarqueDAO extends DAO<Marque, Marque, Integer> {
         return null;
     }
 
-    public Marque getByLibelle(String libelle) {
-        String sqlRequest = "Select id_marque, nom_marque from Marque where nom_marque = ?";
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
-            preparedStatement.setString(1, libelle);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if(resultSet.next()) return new Marque(resultSet.getInt(1),resultSet.getString(2));
-            return null;
-        }catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     @Override
     public ArrayList<Marque> getAll() {
         ArrayList<Marque> liste = new ArrayList<>();
-        String sqlRequest = "SELECT ID_Marque, NOM_Marque FROM Marque";
-        try(Statement statement = connection.createStatement()) {
+        String sqlRequest = "SELECT ID_MARQUE, NOM_MARQUE, PAYS.ID_PAYS, PAYS.NOM_PAYS, CONTINENT.ID_CONTINENT, CONTINENT.NOM_CONTINENT, " +
+                "ISNULL(FABRICANT.ID_FABRICANT, (SELECT MAX(ID_FABRICANT) FROM FABRICANT) + 1) AS ID_FABRICANT, " +
+                "ISNULL(FABRICANT.NOM_FABRICANT, 'Autre') AS NOM_FABRICANT " +
+                "FROM MARQUE " +
+                "LEFT JOIN FABRICANT ON MARQUE.ID_FABRICANT = FABRICANT.ID_FABRICANT " +
+                "LEFT JOIN PAYS ON MARQUE.ID_PAYS = PAYS.ID_PAYS " +
+                "JOIN CONTINENT ON PAYS.ID_CONTINENT = CONTINENT.ID_CONTINENT";
+
+        try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sqlRequest);
             while (resultSet.next()) {
-                liste.add(new Marque(resultSet.getInt(1),resultSet.getString(2)));
-            } resultSet.close();
+                Continent continent = new Continent(resultSet.getInt("ID_CONTINENT"), resultSet.getString("NOM_CONTINENT"));
+                Pays pays = new Pays(resultSet.getInt("ID_PAYS"), resultSet.getString("NOM_PAYS"), continent);
+                Fabricant fabricant = new Fabricant(resultSet.getInt("ID_FABRICANT"), resultSet.getString("NOM_FABRICANT"));
+
+                Marque marque = new Marque(resultSet.getInt("ID_MARQUE"), resultSet.getString("NOM_MARQUE"));
+                marque.setPays(pays);
+                marque.setFabricant(fabricant);
+                liste.add(marque);
+
+            }
+            resultSet.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return liste;
     }
 
+
     @Override
     public ArrayList<Marque> getLike(Marque object) {
-        String sqlCommand = "SELECT ID_Marque, NOM_Marque FROM Marque WHERE ID_Marque LIKE '%" + object.getLibelle()+"%'";
+        String sqlCommand = "SELECT ID_Marque, NOM_Marque FROM Marque WHERE ID_Marque LIKE ?";
         ArrayList<Marque> liste = new ArrayList<>();
-        try(Statement statement = connection.createStatement()){
-            ResultSet resultSet = statement.executeQuery(sqlCommand);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
+            preparedStatement.setString(1, "%" + object.getId() + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                liste.add(new Marque(resultSet.getInt(1),resultSet.getString(2)));
-            } resultSet.close();
-        } catch (Exception e) {e.printStackTrace();}
+                liste.add(new Marque(resultSet.getInt(1), resultSet.getString(2)));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return liste;
     }
 

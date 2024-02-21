@@ -6,6 +6,7 @@ import jakarta.faces.convert.Converter;
 import jakarta.faces.convert.FacesConverter;
 import jakarta.inject.Inject;
 import vn.loto.jsf04.bean.MarqueBean;
+import vn.loto.jsf04.metier.Couleur;
 import vn.loto.jsf04.metier.Marque;
 
 @FacesConverter(value = "marqueConverter", managed = true)
@@ -24,7 +25,6 @@ public class MarqueConverter implements Converter {
         }
         return null;
     }
-
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
         Marque marque = (Marque) object;
         return marque != null ? String.valueOf(marque.getId()) : null;

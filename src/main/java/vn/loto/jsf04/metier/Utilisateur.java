@@ -15,22 +15,22 @@ public class Utilisateur {
     @Getter
     @Setter
     private String password;
-    @Getter
-    @Setter
-    private Roles roles;
+
+    private Roles roleUser = new Roles();
 
     public Utilisateur(){
 
     }
 
-    public Utilisateur( String username, String password, Roles roles){
+    public Utilisateur( String username, String password, Roles roleUser){
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.roleUser = roleUser;
     }
     public Utilisateur(String username, String password){
         this.username = username;
         this.password = password;
+        this.roleUser = new Roles();
     }
 
 
@@ -49,13 +49,11 @@ public class Utilisateur {
     public void setPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.password = HashPassword.generate(password);
     }
-    public Roles getRoles() {
-        return roles;
+    public Roles getRoleUser() {
+        return roleUser;
     }
 
-    public void setRoles(Roles roles) {
-        this.roles = roles;
+    public void setRoleUser(Roles roleUser) {
+        this.roleUser = roleUser;
     }
-
-
 }

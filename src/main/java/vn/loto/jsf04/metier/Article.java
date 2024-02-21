@@ -44,6 +44,10 @@ public class Article {
     @Getter
     @Setter
     private Stock stockArticle;
+    public Article(){
+
+    }
+
     public Article(int idArticle, String nomArticle) {
         this.idArticle = idArticle;
         this.nomArticle = nomArticle;
@@ -73,17 +77,47 @@ public class Article {
         this.stockArticle = new Stock(stockBiere);
     }
 
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Article article = (Article) o;
-        return idArticle == article.idArticle && stockArticle == article.stockArticle && Objects.equals(nomArticle, article.nomArticle) && Objects.equals(volumeArticle, article.volumeArticle) && Objects.equals(typeArticle, article.typeArticle) && Objects.equals(couleurArticle, article.couleurArticle) && Objects.equals(marqueArticle, article.marqueArticle) && Objects.equals(titrageArticle, article.titrageArticle);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Article article = (Article) object;
+
+        if (idArticle != article.idArticle) return false;
+        if (!Objects.equals(nomArticle, article.nomArticle)) return false;
+        if (!Objects.equals(volumeArticle, article.volumeArticle))
+            return false;
+        if (!Objects.equals(prixArticle, article.prixArticle)) return false;
+        if (!Objects.equals(titrageArticle, article.titrageArticle))
+            return false;
+        if (!Objects.equals(typeArticle, article.typeArticle)) return false;
+        if (!Objects.equals(couleurArticle, article.couleurArticle))
+            return false;
+        if (!Objects.equals(marqueArticle, article.marqueArticle))
+            return false;
+        if (!Objects.equals(continentArticle, article.continentArticle))
+            return false;
+        if (!Objects.equals(paysArticle, article.paysArticle)) return false;
+        if (!Objects.equals(fabricantArticle, article.fabricantArticle))
+            return false;
+        return Objects.equals(stockArticle, article.stockArticle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idArticle, nomArticle, volumeArticle, typeArticle, couleurArticle, marqueArticle, titrageArticle, stockArticle);
+        int result = idArticle;
+        result = 31 * result + (nomArticle != null ? nomArticle.hashCode() : 0);
+        result = 31 * result + (volumeArticle != null ? volumeArticle.hashCode() : 0);
+        result = 31 * result + (prixArticle != null ? prixArticle.hashCode() : 0);
+        result = 31 * result + (titrageArticle != null ? titrageArticle.hashCode() : 0);
+        result = 31 * result + (typeArticle != null ? typeArticle.hashCode() : 0);
+        result = 31 * result + (couleurArticle != null ? couleurArticle.hashCode() : 0);
+        result = 31 * result + (marqueArticle != null ? marqueArticle.hashCode() : 0);
+        result = 31 * result + (continentArticle != null ? continentArticle.hashCode() : 0);
+        result = 31 * result + (paysArticle != null ? paysArticle.hashCode() : 0);
+        result = 31 * result + (fabricantArticle != null ? fabricantArticle.hashCode() : 0);
+        result = 31 * result + (stockArticle != null ? stockArticle.hashCode() : 0);
+        return result;
     }
 }

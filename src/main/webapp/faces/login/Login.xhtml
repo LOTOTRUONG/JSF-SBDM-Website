@@ -4,9 +4,10 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="contenu">
-        <div class="card flex justify-content-center align-items-center" style="width: 40em!important;">
+        <div class="card flex justify-content-center align-items-center bg-yellow-50" style="width: 40em!important;" >
             <div class="font-bold text-center uppercase">
-                <h1>Se connecter</h1>
+                <h:graphicImage library="img" name="logo.png" styleClass="opacity-80 w-6"/>
+                <h1 class="font-bold">Se connecter</h1>
             </div>
                 <h:form id="loginForm" styleClass="text-center">
 
@@ -23,11 +24,11 @@
                             <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Mots de passe:"/>
                         </div>
                         <div class="col">
-                            <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{loginBean.password}" required="true"/>
+                            <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{loginBean.password}" required="true" toggleMask="true" redisplay="true"/>
                         </div>
                     </div>
 
-                    <p:commandButton value="Se connecter" action="#{loginBean.login()}" ajax="false" type="submit" styleClass="my-4"/>
+                    <p:commandButton value="Se connecter" action="#{loginBean.login()}" ajax="false" type="submit" styleClass="mb-6 mt-4 rounded-button ui-button-warning"/>
                 </h:form>
         </div>
     </ui:define>

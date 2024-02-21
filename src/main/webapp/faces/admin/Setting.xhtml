@@ -4,43 +4,144 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <ui:define name="contenu">
-        <div class="card flex flex-column flex-nowrap justify-content-center align-items-center" style="min-width: 60em;">
-                <h:graphicImage library="img" name="admin.png" styleClass="w-2"/>
-                <h:outputLabel value="Bienvenue sur la page d'administration" styleClass="mb-2 py-2 uppercase text-3xl text-red-500 font-bold"/>
+        <div class="card flex flex-column flex-nowrap justify-content-center align-items-center" style="min-width: 80em;">
+                <h:graphicImage library="img" name="admin.png" styleClass="w-1"/>
+                <h:outputLabel value="Bienvenue sur la page d'administration" styleClass="py-2 uppercase text-3xl text-red-500 font-bold"/>
 
-                <div class="mb-2 flex flex-row justify-content-center align-items-center">
-                    <h:graphicImage library="img" name="newUser.png" styleClass="w-2rem"/>
-                    <h:outputLabel value="Créer un nouveau compte" styleClass="py-2"/>
-                </div>
+            <h:form id="modifyUser" styleClass="w-8 m-auto">
+                <p:growl id="message" showDetail="true" />
 
-                <h:form id="inscriptionForm" styleClass="text-center w-9 my-4">
-                    <div class = "grid flex-nowrap justify-content-center align-items-center">
-                        <div class="col-fixed" style="width: 45%">
-                            <p:outputLabel for="username" styleClass="text-center p-3 border-round-sm font-bold" value="Identifiant:"/>
-                        </div>
-                        <div class="col">
-                            <p:inputText id="username" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.username}" required="true"/>
-                        </div>
-                    </div>
-                    <div class = "grid flex-nowrap justify-content-center align-items-center">
-                        <div class="col-fixed" style="width: 45%">
-                            <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Mots de passe:"/>
-                        </div>
-                        <div class="col">
-                            <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.newPassword}" required="true"/>
-                        </div>
-                    </div>
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{utilisateurBean.openNew}"
+                                         update=":dialogs:add-User-content" oncomplete="PF('addUserDialog').show()"
+                                         styleClass="ui-button-success rounded-button" style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:add-User-content" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
 
-                    <p:commandButton value="Inscription" action="#{utilisateurBean.createNewUser()}" ajax="false" type="submit" styleClass="my-4" oncomplete="finishInscription(xhr,status,args)"/>
-                </h:form>
+                <p:dataTable id="users" var="user" value="#{utilisateurBean.allUtilisateurs}" reflow="true" styleClass="products-table" selection="#{utilisateurBean.selectedUtilisateurList}"
+                             paginator="true" rows="5" rowSelectMode="add" paginatorPosition="bottom" rowKey="#{user.username}">
+
+
+                    <p:column headerText="USERNAME" style="width: 30%" styleClass="text-center" sortBy="#{user.username}" filterBy="#{user.username}" filterMatchMode="contains">
+                        <h:outputText value="#{user.username}" styleClass="text-center"/>
+                    </p:column>
+                    <p:column headerText="ROLE" style="width: 15%" styleClass="text-center" sortBy="#{user.roleUser.name}">
+                        <h:outputText value="#{user.roleUser.name}" styleClass="text-center">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column exportable="false"  headerText="MODIFIER" style="width: 15%" styleClass="text-center">
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-User-content"
+                                         oncomplete="PF('manageUserDialog').show()"
+                                         styleClass="edit-button rounded-button ui-button-success mx-2" process="@this">
+                            <f:setPropertyActionListener value="#{user}" target="#{utilisateurBean.selectedUtilisateur}" />
+                            <p:resetInput target=":dialogs:manage-User-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button mx-2" icon="pi pi-trash"
+                                         process="@this"
+                                         oncomplete="PF('deleteUserDialog').show()">
+                            <f:setPropertyActionListener value="#{user}" target="#{utilisateurBean.selectedUtilisateur}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Détail de l'utilisateur" showEffect="fade" modal="true" widgetVar="manageUserDialog"
+                          responsive="true">
+                    <p:outputPanel id="manage-User-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty utilisateurBean.selectedUtilisateur}" style="min-width: 30rem">
+                            <div class="field">
+                                <div class = "grid flex-nowrap justify-content-center align-items-center my-3 mx-4">
+                                    <div class="col-fixed" style="width: 45%">
+                                        <p:outputLabel for="username1" styleClass="text-center p-3 border-round-sm font-bold" value="Nom d'utilisateur:"/>
+                                    </div>
+                                    <div class="col">
+                                        <p:outputLabel id="username1" value="#{utilisateurBean.selectedUtilisateur.username}" styleClass="uppercase font-bold"/>
+                                    </div>
+                                </div>
+                                <div class = "grid flex-nowrap justify-content-center align-items-center mx-4">
+                                    <div class="col-fixed" style="width: 45%">
+                                        <p:outputLabel for="role" styleClass="text-center p-3 border-round-sm font-bold" value="Role d'utilisateur:"/>
+                                    </div>
+                                    <div class="col">
+                                        <p:selectOneMenu id="role" value="#{utilisateurBean.selectedUtilisateur.roleUser}" disabled="#{utilisateurBean.selectedUtilisateur.username eq 'admin'}">
+                                            <f:selectItems value="#{roleBean.allRoles}" var="role" itemValue="#{role}" itemLabel="#{role.name}" />
+                                            <f:converter converterId="roleConverter"/>
+                                        </p:selectOneMenu>
+
+                                    </div>
+                                </div>
+
+
+                                <div class="flex flex-row-reverse mt-3 mx-4">
+                                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
+                                                     styleClass="rounded-button w-8rem ui-button-secondary mx-2" type="button" />
+                                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{utilisateurBean.updateUser}" styleClass="rounded-button w-8rem mx-2"
+                                                     update=":modifyUser:message, :modifyUser:users" process="manage-User-content @this" onclick="PF('manageUserDialog').hide()">
+
+                                    </p:commandButton>
+
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                </p:dialog>
+
+                <p:dialog header="AJOUTER UN NOUVEL UTILISATEUR" showEffect="fade" modal="true" widgetVar="addUserDialog"
+                          responsive="true">
+                    <p:outputPanel id="add-User-content" class="ui-fluid" style="min-width: 30rem">
+                        <div class="field">
+                            <p:growl id="messages" showDetail="true" />
+                            <div class = "grid flex-nowrap justify-content-center align-items-center">
+                                <div class="col-fixed" style="width: 45%">
+                                    <p:outputLabel for="username" styleClass="text-center p-3 border-round-sm font-bold" value="Identifiant:"/>
+                                </div>
+                                <div class="col">
+                                    <p:inputText id="username" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.username}" required="true"/>
+                                </div>
+                            </div>
+                            <div class = "grid flex-nowrap justify-content-center align-items-center">
+                                <div class="col-fixed" style="width: 45%">
+                                    <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Mots de passe:"/>
+                                </div>
+                                <div class="col">
+                                    <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.newPassword}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="flex flex-row-reverse mt-3">
+                                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('addUserDialog').hide()" styleClass="w-8rem ui-button-secondary mx-2"
+                                                 type="button" />
+                                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{utilisateurBean.createNewUser()}" styleClass="w-8rem mx-2"
+                                             update=":modifyUser:message" process="add-User-content @this" onclick="PF('addUserDialog').hide()">
+
+                                </p:commandButton>
+
+                            </div>
+                        </div>
+                    </p:outputPanel>
+
+                </p:dialog>
+
+
+                <p:confirmDialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                                 message="Supprimer cet utilisateur?" header="CONFIRMATION" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{utilisateurBean.deleteUser}" styleClass="rounded-button ui-button-danger mx-2"
+                                     process="@this" onclick="PF('deleteUserDialog').hide()"/>
+                    <p:commandButton value="No" type="button" styleClass="rounded-button ui-button-secondary mx-2" icon="pi pi-times"
+                                     onclick="PF('deleteUserDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes rounded-button ui-button-warning" icon="pi pi-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no rounded-button ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
+            </h:form>
         </div>
-        <script type="text/javascript">
-            function finishInscription(xhr,status,args) {
-                if(args.validationFailed)
-                    PF('spot').show();
-                else
-                    PF('spot').hide();
-            }
-        </script>
     </ui:define>
 </ui:composition>

@@ -31,7 +31,7 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
     @Override
     public ArrayList<Article> getAll() {
         ArrayList<Article> liste = new ArrayList<>();
-        String sqlRequest = "{call ps_AllArticles}";
+        String sqlRequest = "{call ps_allArticles}";
         try {
             CallableStatement callableStatement = connection.prepareCall(sqlRequest);
             ResultSet resultSet = callableStatement.executeQuery();
@@ -48,9 +48,9 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
                 int idCouleur = resultSet.getInt("ID_COULEUR");
                 String nomCouleur = resultSet.getString("NOM_COULEUR");
                 int idFabricant = resultSet.getInt("ID_FABRICANT");
+                String nomFabricant = resultSet.getString("NOM_FABRICANT");
                 int idMarque = resultSet.getInt("ID_MARQUE");
                 String nomMarque = resultSet.getString("NOM_MARQUE");
-                String nomFabricant = resultSet.getString("NOM_fabricant");
                 int idPays = resultSet.getInt("ID_PAYS");
                 String nomPays = resultSet.getString("NOM_PAYS");
                 int idContinent = resultSet.getInt("ID_CONTINENT");
@@ -96,7 +96,12 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
                 Titrage titrage = new Titrage(resultSet.getFloat("TITRAGE"));
                 Type type = new Type(resultSet.getInt("ID_TYPE"), resultSet.getString("TYPE"));
                 Couleur couleur = new Couleur(resultSet.getInt("ID_COULEUR"), resultSet.getString("COULEUR"));
+                Continent continent = new Continent(resultSet.getInt("ID_CONTINENT"),resultSet.getString("CONTINENT"));
+                Pays pays = new Pays(resultSet.getInt("ID_PAYS"), resultSet.getString("PAYS"));
+                Fabricant fabricant = new Fabricant(resultSet.getInt("ID_FABRICANT"), resultSet.getString("FABRICANT"));
                 Marque marque = new Marque(resultSet.getInt("ID_MARQUE"), resultSet.getString("MARQUE"));
+                marque.setPays(pays);
+                marque.setFabricant(fabricant);
 
                 article.setStockArticle(stock);
                 article.setPrixArticle(resultSet.getFloat("PRIX_ACHAT"));
@@ -105,6 +110,9 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
                 article.setTypeArticle(type);
                 article.setCouleurArticle(couleur);
                 article.setMarqueArticle(marque);
+                article.setPaysArticle(pays);
+                article.setContinentArticle(continent);
+                article.setFabricantArticle(fabricant);
 
                 liste.add(article);
             }
@@ -119,7 +127,7 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
 
     @Override
     public boolean insert(Article object) {
-        String updateQuery = "{call ps_InsertArticle(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)}";
+        String updateQuery = "{call ps_InsertArticle2(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)}";
         try (CallableStatement callableStatement = connection.prepareCall(updateQuery))
         {
             callableStatement.setInt(1, object.getIdArticle());
@@ -152,7 +160,7 @@ public class ArticleDAO extends DAO<Article, ArticleSearch, Integer> {
 
     @Override
     public boolean update(Article updatedArticle) {
-        String updateQuery = "{call ps_UpdateArticle(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)}";
+        String updateQuery = "{call ps_UpdateArticle2(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)}";
         try (CallableStatement callableStatement = connection.prepareCall(updateQuery))
            {
                 callableStatement.setInt(1, updatedArticle.getIdArticle());

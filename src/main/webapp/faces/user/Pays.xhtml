@@ -8,35 +8,47 @@
         <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCvCDkYieuUBmMWon_mfLAfjuaeuosuqow&amp;sensor=false"></script>
     </ui:define>
     <ui:define name="contenu">
-        <h:form styleClass="flex justify-content-center	align-content-center">
-        <div class="card w-8">
-            <!--Gmaps
-            <p:gmap center="36.890257,30.707417" zoom="13" type="HYBRID" style="width:100%;height:400px" model="#{markersView.simpleModel}" />
-            -->
-            <!--table-->
-            <p:dataTable id="pays" var="pay" value="#{paysBean.allPaysMarqueContinent}" rows="6"
-                         paginator="true" paginatorPosition="bottom"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
-                         rowsPerPageTemplate="6,12">
-                <p:column headerText="ID de pays" style="width: 20%">
-                        <h:outputText value="#{pay.id}" />
-                </p:column>
+        <div class="card w-full my-4">
+        <div class="grid flex align-items-center justify-content-center">
+            <div class="col-6 flex align-items-center justify-content-center my-3">
+                <h:form styleClass="flex justify-content-center	align-content-center">
+                    <!--Gmaps
+                    <p:gmap center="36.890257,30.707417" zoom="13" type="HYBRID" style="width:100%;height:400px" model="#{markersView.simpleModel}" />
+                    -->
+                    <!--table-->
+                    <p:dataTable id="pays" var="pay" value="#{paysBean.paysLazyDataModel}" rows="6"
+                                 rowKey="#{pay.id}" lazy="true"
+                                 paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 allowUnsorting="true" sortMode="single">
+                        <p:column headerText="ID PAYS" style="width: 15%">
+                            <h:outputText value="#{pay.id}" rendered="#{pay.id ne 0}" styleClass="vertical-align-middle	ml-2" />
+                        </p:column>
 
-                <p:column headerText="Nom de pays" style="width: 30%">
-                    <h:outputText value="#{pay.libelle}" />
-                </p:column>
+                        <p:column headerText="Nom de pays" style="width: 30%">
+                            <h:outputText value="#{pay.libelle}" rendered="#{pay.id ne 0}" styleClass="vertical-align-middle ml-2"/>
+                        </p:column>
 
-                <p:column headerText="Nom de continent" style="width: 30%">
-                    <h:outputText value="#{pay.continent.libelle}" />
-                </p:column>
+                        <p:column headerText="Nom de continent" sortBy="#{pay.continent.libelle}" style="width: 40%">
+                            <h:outputText value="#{pay.continent.libelle}" rendered="#{pay.id ne 0}" styleClass="vertical-align-middle	ml-2"/>
+                        </p:column>
 
-                <p:column headerText="Number de marque" style="width: 30%">
-                    <h:outputText value="#{pay.countMarque}" />
-                </p:column>
+                        <p:column headerText="Number de marque" style="width: 30%">
+                            <h:outputText value="#{pay.countMarque}" rendered="#{pay.id ne 0}" styleClass="vertical-align-middle ml-2"/>
+                        </p:column>
 
-            </p:dataTable>
+                    </p:dataTable>
+                </h:form>
             </div>
-        </h:form>
+            <div class="col-fixed">
+                <p:divider layout="vertical">
+                </p:divider>
+            </div>
+            <div class="col-5 flex align-items-center justify-content-center">
+                    <p:pieChart model="#{continentBean.pieModel}" style="width: 100%; height: 200px"/>
+            </div>
+        </div>
+        </div>
     </ui:define>
 </ui:composition>

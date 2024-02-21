@@ -4,10 +4,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import org.primefaces.PrimeFaces;
 import vn.loto.jsf04.dao.DAOFactory;
+import vn.loto.jsf04.metier.Couleur;
+import vn.loto.jsf04.metier.Roles;
 import vn.loto.jsf04.metier.Utilisateur;
 import vn.loto.jsf04.security.HashPassword;
 
@@ -15,16 +19,24 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class UtilisateurBean implements Serializable {
     private List<Utilisateur> allUtilisateurs;
+    @Getter
+    @Setter
+    private List<Roles> allRoles;
 
     @Getter
     @Setter
-    private Utilisateur utilisateur;
+    private Utilisateur selectedUtilisateur;
+
+    @Getter
+    @Setter
+    private  List<Utilisateur> selectedUtilisateurList;
 
     @Getter
     @Setter
@@ -41,9 +53,11 @@ public class UtilisateurBean implements Serializable {
 
     @PostConstruct
     public void init(){
-        if (allUtilisateurs == null){
+        if (allUtilisateurs == null) {
             allUtilisateurs = DAOFactory.getUtilisateurDAO().getAll();
         }
+        selectedUtilisateur = new Utilisateur();
+        this.selectedUtilisateurList = new ArrayList<>();
     }
 
     public List<Utilisateur> getAllUtilisateurs() {
@@ -63,10 +77,15 @@ public class UtilisateurBean implements Serializable {
     public String getOldPassword(){
         return oldPassword;
     }
+    public void openNew() {
+        this.selectedUtilisateur = new Utilisateur();
+    }
 
     public void createNewUser(){
         Utilisateur newUser = new Utilisateur(this.username, this.newPassword);
         DAOFactory.getUtilisateurDAO().insert(newUser);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Member added successfully"));
+        PrimeFaces.current().ajax().update("modifyUser:users" );
     }
 
     public String changePassword() {
@@ -113,6 +132,25 @@ public class UtilisateurBean implements Serializable {
         return null;
     }
 
+    public void deleteUser(){
+        if (selectedUtilisateur != null) {
+            allUtilisateurs.remove(selectedUtilisateur);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User Removed"));
+            //PrimeFaces.current().executeScript("PF('deleteColorDialog').hide()");
+            PrimeFaces.current().ajax().update("modifyUser:message", "modifyUser:users");
+            DAOFactory.getUtilisateurDAO().delete(selectedUtilisateur);
+        }
+    }
 
+    public void updateUser() {
+        if (selectedUtilisateur != null) {
+            if (DAOFactory.getUtilisateurDAO().updateUsernameRole(selectedUtilisateur)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User updated successfully"));
+            }
+            else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Failed to update user"));
+            }
+        }
+    }
 
 }

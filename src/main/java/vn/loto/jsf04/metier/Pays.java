@@ -92,6 +92,20 @@ public class Pays {
         return Objects.hash(id, libelle);
     }
 
+    public Object getComparatorByValue(String field){
+        field = field.toLowerCase();
+       if (field.equals("nom_pays")){
+           return libelle;
+       }
+       if (field.equals("id_pays")){
+           return id;
+       }
+       if (field.equals("continent.libelle")){
+           return continent.getLibelle();
+       }
+        return null;
+    }
+
 
 }
 

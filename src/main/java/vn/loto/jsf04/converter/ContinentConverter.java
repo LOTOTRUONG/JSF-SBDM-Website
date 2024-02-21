@@ -28,6 +28,9 @@ public class ContinentConverter implements Converter<Continent> {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Continent continent) {
-        return String.valueOf(continent.getId());
+        if (continent != null) {
+            return String.valueOf(continent.getId());
+        }
+        return null;
     }
 }

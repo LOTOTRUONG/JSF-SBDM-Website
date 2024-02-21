@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TypeDAO extends DAO<Type, Type, Integer> {
     @Override
@@ -79,6 +80,27 @@ public class TypeDAO extends DAO<Type, Type, Integer> {
             preparedStatement.executeUpdate();
             return true;
         }catch (SQLException E) {
+            return false;
+        }
+    }
+    public boolean deleteMultiple(List<Type> typeList) {
+        String sqlRequest = "DELETE FROM TYPEBIERE WHERE ID_TYPE = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            for (Type type : typeList) {
+                preparedStatement.setInt(1, type.getId());
+                preparedStatement.addBatch();
+            }
+            int[] deleteCounts = preparedStatement.executeBatch();
+            // Check the result of batch execution
+            for (int deleteCount : deleteCounts) {
+                if (deleteCount != 1) {
+                    // Handle failure to delete
+                    return false;
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }

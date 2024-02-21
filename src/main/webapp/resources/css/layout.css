@@ -3,6 +3,8 @@
 #header{
     height: 80px;
     color: white !important;
+    background-color: rgba(128, 78, 10, 0.87);
+
 
 }
 #content{
@@ -12,7 +14,6 @@
 }
 
 #footer {
-    margin-top: 25px;
     height:100px;
     background-color: rgba(128, 78, 10, 0.87);
     color: white !important;
