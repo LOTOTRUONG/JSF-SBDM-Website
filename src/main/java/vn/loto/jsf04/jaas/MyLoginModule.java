@@ -1,8 +1,7 @@
 package vn.loto.jsf04.jaas;
 
 import vn.loto.jsf04.dao.DAOFactory;
-import vn.loto.jsf04.metier.Roles;
-import vn.loto.jsf04.metier.Identification;
+import vn.loto.jsf04.metier.User;
 import vn.loto.jsf04.security.HashPassword;
 
 import javax.security.auth.Subject;
@@ -78,18 +77,18 @@ public class MyLoginModule implements LoginModule {
             if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
                 throw new LoginException("Data specified had null values");
             }
-            Identification utilisateur = new Identification(username, password);
-            Identification users = DAOFactory.getIdentificationDAO().getByUsername(username);
+            User utilisateur = new User(username, password);
+            User users = DAOFactory.getUserDAO().getByUsername(username);
 
             if (utilisateur.getLogin().equals(users.getLogin()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
-                if ("admin".equals(users.getRoleUser().getName())) {
+                if ("admin".equals(users.getRoles())) {
                     // Add all role names to userGroups if the user is an admin
-                    List<Roles> roles = DAOFactory.getRolesDAO().getAll(); // Assuming you have a method to retrieve all roles
-                    for (Roles role : roles) {
-                        userGroups.add(role.getName());
+                    List<String> roles = DAOFactory.getUserDAO().getAllRoles(); // Assuming you have a method to retrieve all roles
+                    for (String role : roles) {
+                        userGroups.add(role);
                     }
                 } else {
-                    userGroups.add(users.getRoleUser().getName());
+                    userGroups.add(users.getRoles());
                 }
                 isAuthenticated = true;
                 return true;

@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 
-public class Identification {
+public class User {
     @Getter
     @Setter
     private String login;
@@ -16,21 +16,22 @@ public class Identification {
     @Setter
     private String password;
 
-    private Roles roleUser = new Roles();
+    @Getter
+    @Setter
+    private String roles;
 
-    public Identification(){
+    public User(){
 
     }
 
-    public Identification(String login, String password, Roles roleUser){
+    public User(String login, String password, String roles){
         this.login = login;
         this.password = password;
-        this.roleUser = roleUser;
+        this.roles = roles;
     }
-    public Identification(String login, String password){
+    public User(String login, String password){
         this.login = login;
         this.password = password;
-        this.roleUser = new Roles();
     }
 
 
@@ -48,12 +49,5 @@ public class Identification {
 
     public void setPassword(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.password = HashPassword.generate(password);
-    }
-    public Roles getRoleUser() {
-        return roleUser;
-    }
-
-    public void setRoleUser(Roles roleUser) {
-        this.roleUser = roleUser;
     }
 }

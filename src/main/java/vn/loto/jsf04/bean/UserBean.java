@@ -9,8 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import vn.loto.jsf04.dao.DAOFactory;
-import vn.loto.jsf04.metier.Roles;
-import vn.loto.jsf04.metier.Identification;
+import vn.loto.jsf04.metier.User;
 import vn.loto.jsf04.security.HashPassword;
 
 import java.io.Serializable;
@@ -21,19 +20,19 @@ import java.util.List;
 
 @Named
 @ViewScoped
-public class IdentificationBean implements Serializable {
-    private List<Identification> allUtilisateurs;
+public class UserBean implements Serializable {
+    private List<User> allUtilisateurs;
     @Getter
     @Setter
-    private List<Roles> allRoles;
+    private List<String> allRoles;
 
     @Getter
     @Setter
-    private Identification selectedUtilisateur;
+    private User selectedUtilisateur;
 
     @Getter
     @Setter
-    private  List<Identification> selectedUtilisateurList;
+    private  List<User> selectedUtilisateurList;
 
     @Getter
     @Setter
@@ -51,20 +50,21 @@ public class IdentificationBean implements Serializable {
     @PostConstruct
     public void init(){
         if (allUtilisateurs == null) {
-            allUtilisateurs = DAOFactory.getIdentificationDAO().getAll();
+            allUtilisateurs = DAOFactory.getUserDAO().getAll();
         }
-        selectedUtilisateur = new Identification();
+        selectedUtilisateur = new User();
         this.selectedUtilisateurList = new ArrayList<>();
+        allRoles = DAOFactory.getUserDAO().getAllRoles();
     }
 
-    public List<Identification> getAllUtilisateurs() {
+    public List<User> getAllUtilisateurs() {
         return allUtilisateurs;
     }
     public void setNewPassword(String newPassword)throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.newPassword = HashPassword.generate(newPassword);
     }
 
-    public void setAllUtilisateurs(List<Identification> allUtilisateurs) {
+    public void setAllUtilisateurs(List<User> allUtilisateurs) {
         this.allUtilisateurs = allUtilisateurs;
     }
 
@@ -75,12 +75,12 @@ public class IdentificationBean implements Serializable {
         return oldPassword;
     }
     public void openNew() {
-        this.selectedUtilisateur = new Identification();
+        this.selectedUtilisateur = new User();
     }
 
     public void createNewUser(){
-        Identification newUser = new Identification(this.login, this.newPassword);
-        DAOFactory.getIdentificationDAO().insert(newUser);
+        User newUser = new User(this.login, this.newPassword);
+        DAOFactory.getUserDAO().insert(newUser);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Member added successfully"));
         PrimeFaces.current().ajax().update("modifyUser:users" );
     }
@@ -100,7 +100,7 @@ public class IdentificationBean implements Serializable {
         }
 
         try {
-            Identification existingUser = DAOFactory.getIdentificationDAO().getByUsername(this.login);
+            User existingUser = DAOFactory.getUserDAO().getByUsername(this.login);
             if (existingUser == null) {
                 context.addMessage(null, new FacesMessage("User not found!"));
                 return null;
@@ -112,7 +112,7 @@ public class IdentificationBean implements Serializable {
             }
 
             // Password update in the database
-            DAOFactory.getIdentificationDAO().update(existingUser);
+            DAOFactory.getUserDAO().update(existingUser);
 
             // Clear the fields after successful password change
 //            this.oldPassword = null;
@@ -135,13 +135,13 @@ public class IdentificationBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User Removed"));
             //PrimeFaces.current().executeScript("PF('deleteColorDialog').hide()");
             PrimeFaces.current().ajax().update("modifyUser:message", "modifyUser:users");
-            DAOFactory.getIdentificationDAO().delete(selectedUtilisateur);
+            DAOFactory.getUserDAO().delete(selectedUtilisateur);
         }
     }
 
     public void updateUser() {
         if (selectedUtilisateur != null) {
-            if (DAOFactory.getIdentificationDAO().updateUsernameRole(selectedUtilisateur)) {
+            if (DAOFactory.getUserDAO().updateUsernameRole(selectedUtilisateur)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User updated successfully"));
             }
             else {

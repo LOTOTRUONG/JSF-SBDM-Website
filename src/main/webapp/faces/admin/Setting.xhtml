@@ -13,7 +13,7 @@
 
                 <p:toolbar>
                     <p:toolbarGroup>
-                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{identificationBean.openNew}"
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{userBean.openNew}"
                                          update=":dialogs:add-User-content" oncomplete="PF('addUserDialog').show()"
                                          styleClass="ui-button-success rounded-button" style="margin-right: .5rem">
                             <p:resetInput target=":dialogs:add-User-content" />
@@ -21,15 +21,15 @@
                     </p:toolbarGroup>
                 </p:toolbar>
 
-                <p:dataTable id="users" var="user" value="#{identificationBean.allUtilisateurs}" reflow="true" styleClass="products-table" selection="#{identificationBean.selectedUtilisateurList}"
+                <p:dataTable id="users" var="user" value="#{userBean.allUtilisateurs}" reflow="true" styleClass="products-table" selection="#{userBean.selectedUtilisateurList}"
                              paginator="true" rows="5" rowSelectMode="add" paginatorPosition="bottom" rowKey="#{user.login}">
 
 
                     <p:column headerText="USERNAME" style="width: 30%" styleClass="text-center" sortBy="#{user.login}" filterBy="#{user.login}" filterMatchMode="contains">
                         <h:outputText value="#{user.login}" styleClass="text-center"/>
                     </p:column>
-                    <p:column headerText="ROLE" style="width: 15%" styleClass="text-center" sortBy="#{user.roleUser.name}">
-                        <h:outputText value="#{user.roleUser.name}" styleClass="text-center">
+                    <p:column headerText="ROLE" style="width: 15%" styleClass="text-center" sortBy="#{user.roles}">
+                        <h:outputText value="#{user.roles}" styleClass="text-center">
                         </h:outputText>
                     </p:column>
 
@@ -37,13 +37,13 @@
                         <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-User-content"
                                          oncomplete="PF('manageUserDialog').show()"
                                          styleClass="edit-button rounded-button ui-button-success mx-2" process="@this">
-                            <f:setPropertyActionListener value="#{user}" target="#{identificationBean.selectedUtilisateur}" />
+                            <f:setPropertyActionListener value="#{user}" target="#{userBean.selectedUtilisateur}" />
                             <p:resetInput target=":dialogs:manage-User-content" />
                         </p:commandButton>
                         <p:commandButton class="ui-button-warning rounded-button mx-2" icon="pi pi-trash"
                                          process="@this"
                                          oncomplete="PF('deleteUserDialog').show()">
-                            <f:setPropertyActionListener value="#{user}" target="#{identificationBean.selectedUtilisateur}" />
+                            <f:setPropertyActionListener value="#{user}" target="#{userBean.selectedUtilisateur}" />
                         </p:commandButton>
                     </p:column>
 
@@ -54,14 +54,14 @@
                 <p:dialog header="Détail de l'utilisateur" showEffect="fade" modal="true" widgetVar="manageUserDialog"
                           responsive="true">
                     <p:outputPanel id="manage-User-content" class="ui-fluid">
-                        <p:outputPanel rendered="#{not empty identificationBean.selectedUtilisateur}" style="min-width: 30rem">
+                        <p:outputPanel rendered="#{not empty userBean.selectedUtilisateur}" style="min-width: 30rem">
                             <div class="field">
                                 <div class = "grid flex-nowrap justify-content-center align-items-center my-3 mx-4">
                                     <div class="col-fixed" style="width: 45%">
                                         <p:outputLabel for="username1" styleClass="text-center p-3 border-round-sm font-bold" value="Nom d'utilisateur:"/>
                                     </div>
                                     <div class="col">
-                                        <p:outputLabel id="username1" value="#{identificationBean.selectedUtilisateur.login}" styleClass="uppercase font-bold"/>
+                                        <p:outputLabel id="username1" value="#{userBean.selectedUtilisateur.login}" styleClass="uppercase font-bold"/>
                                     </div>
                                 </div>
                                 <div class = "grid flex-nowrap justify-content-center align-items-center mx-4">
@@ -69,9 +69,8 @@
                                         <p:outputLabel for="role" styleClass="text-center p-3 border-round-sm font-bold" value="Role d'utilisateur:"/>
                                     </div>
                                     <div class="col">
-                                        <p:selectOneMenu id="role" value="#{identificationBean.selectedUtilisateur.roleUser}" disabled="#{identificationBean.selectedUtilisateur.login eq 'admin'}">
-                                            <f:selectItems value="#{roleBean.allRoles}" var="role" itemValue="#{role}" itemLabel="#{role.name}" />
-                                            <f:converter converterId="roleConverter"/>
+                                        <p:selectOneMenu id="role" value="#{userBean.selectedUtilisateur.roles}" disabled="#{userBean.selectedUtilisateur.login eq 'admin'}">
+                                            <f:selectItems value="#{userBean.allRoles}"/>
                                         </p:selectOneMenu>
 
                                     </div>
@@ -81,7 +80,7 @@
                                 <div class="flex flex-row-reverse mt-3 mx-4">
                                     <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
                                                      styleClass="rounded-button w-8rem ui-button-secondary mx-2" type="button" />
-                                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{identificationBean.updateUser}" styleClass="rounded-button w-8rem mx-2"
+                                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{userBean.updateUser}" styleClass="rounded-button w-8rem mx-2"
                                                      update=":modifyUser:message, :modifyUser:users" process="manage-User-content @this" onclick="PF('manageUserDialog').hide()">
 
                                     </p:commandButton>
@@ -106,7 +105,7 @@
                                     <p:outputLabel for="username" styleClass="text-center p-3 border-round-sm font-bold" value="Identifiant:"/>
                                 </div>
                                 <div class="col">
-                                    <p:inputText id="username" styleClass="text-center p-3 border-round-sm surface-50" value="#{identificationBean.login}" required="true"/>
+                                    <p:inputText id="username" styleClass="text-center p-3 border-round-sm surface-50" value="#{userBean.login}" required="true"/>
                                 </div>
                             </div>
                             <div class = "grid flex-nowrap justify-content-center align-items-center">
@@ -114,13 +113,13 @@
                                     <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Mots de passe:"/>
                                 </div>
                                 <div class="col">
-                                    <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{identificationBean.newPassword}" required="true"/>
+                                    <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{userBean.newPassword}" required="true"/>
                                 </div>
                             </div>
                             <div class="flex flex-row-reverse mt-3">
                                 <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('addUserDialog').hide()" styleClass="w-8rem ui-button-secondary mx-2"
                                                  type="button" />
-                                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{identificationBean.createNewUser()}" styleClass="w-8rem mx-2"
+                                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{userBean.createNewUser()}" styleClass="w-8rem mx-2"
                                                  update=":modifyUser:message" process="add-User-content @this" onclick="PF('addUserDialog').hide()">
 
                                 </p:commandButton>
@@ -134,7 +133,7 @@
 
                 <p:confirmDialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
                                  message="Supprimer cet utilisateur?" header="CONFIRMATION" severity="warn">
-                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{identificationBean.deleteUser}" styleClass="rounded-button ui-button-danger mx-2"
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{userBean.deleteUser}" styleClass="rounded-button ui-button-danger mx-2"
                                      process="@this" onclick="PF('deleteUserDialog').hide()"/>
                     <p:commandButton value="No" type="button" styleClass="rounded-button ui-button-secondary mx-2" icon="pi pi-times"
                                      onclick="PF('deleteUserDialog').hide()" />
