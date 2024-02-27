@@ -2,7 +2,7 @@ package vn.loto.jsf04.jaas;
 
 import vn.loto.jsf04.dao.DAOFactory;
 import vn.loto.jsf04.metier.Roles;
-import vn.loto.jsf04.metier.Utilisateur;
+import vn.loto.jsf04.metier.Identification;
 import vn.loto.jsf04.security.HashPassword;
 
 import javax.security.auth.Subject;
@@ -78,8 +78,8 @@ public class MyLoginModule implements LoginModule {
             if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
                 throw new LoginException("Data specified had null values");
             }
-            Utilisateur utilisateur = new Utilisateur(username, password);
-            Utilisateur users = DAOFactory.getUtilisateurDAO().getByUsername(username);
+            Identification utilisateur = new Identification(username, password);
+            Identification users = DAOFactory.getUtilisateurDAO().getByUsername(username);
 
             if (utilisateur.getUsername().equals(users.getUsername()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
                 if ("admin".equals(users.getRoleUser().getName())) {

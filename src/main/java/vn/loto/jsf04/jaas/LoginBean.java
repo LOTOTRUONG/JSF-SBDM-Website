@@ -12,7 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.Setter;
-import vn.loto.jsf04.bean.UtilisateurBean;
+import vn.loto.jsf04.bean.IdentificationBean;
 
 import java.io.Serializable;
 
@@ -35,7 +35,7 @@ public class LoginBean implements Serializable {
 
     private String originalURI;
     @Inject
-    private UtilisateurBean utilisateurBean;
+    private IdentificationBean utilisateurBean;
 
 
     @PostConstruct
@@ -60,11 +60,11 @@ public class LoginBean implements Serializable {
         */
 
     }
-    public UtilisateurBean getUtilisateurBean() {
+    public IdentificationBean getUtilisateurBean() {
         return utilisateurBean;
     }
 
-    public void setUtilisateurBean(UtilisateurBean utilisateurBean) {
+    public void setUtilisateurBean(IdentificationBean utilisateurBean) {
         this.utilisateurBean = utilisateurBean;
     }
 

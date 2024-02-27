@@ -1,7 +1,6 @@
 package vn.loto.jsf04.bean;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -10,37 +9,35 @@ import lombok.Getter;
 import lombok.Setter;
 import org.primefaces.PrimeFaces;
 import vn.loto.jsf04.dao.DAOFactory;
-import vn.loto.jsf04.metier.Couleur;
 import vn.loto.jsf04.metier.Roles;
-import vn.loto.jsf04.metier.Utilisateur;
+import vn.loto.jsf04.metier.Identification;
 import vn.loto.jsf04.security.HashPassword;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Named
 @ViewScoped
-public class UtilisateurBean implements Serializable {
-    private List<Utilisateur> allUtilisateurs;
+public class IdentificationBean implements Serializable {
+    private List<Identification> allUtilisateurs;
     @Getter
     @Setter
     private List<Roles> allRoles;
 
     @Getter
     @Setter
-    private Utilisateur selectedUtilisateur;
+    private Identification selectedUtilisateur;
 
     @Getter
     @Setter
-    private  List<Utilisateur> selectedUtilisateurList;
+    private  List<Identification> selectedUtilisateurList;
 
     @Getter
     @Setter
-    private String username;
+    private String login;
 
     private String oldPassword;
 
@@ -56,18 +53,18 @@ public class UtilisateurBean implements Serializable {
         if (allUtilisateurs == null) {
             allUtilisateurs = DAOFactory.getUtilisateurDAO().getAll();
         }
-        selectedUtilisateur = new Utilisateur();
+        selectedUtilisateur = new Identification();
         this.selectedUtilisateurList = new ArrayList<>();
     }
 
-    public List<Utilisateur> getAllUtilisateurs() {
+    public List<Identification> getAllUtilisateurs() {
         return allUtilisateurs;
     }
     public void setNewPassword(String newPassword)throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.newPassword = HashPassword.generate(newPassword);
     }
 
-    public void setAllUtilisateurs(List<Utilisateur> allUtilisateurs) {
+    public void setAllUtilisateurs(List<Identification> allUtilisateurs) {
         this.allUtilisateurs = allUtilisateurs;
     }
 
@@ -78,11 +75,11 @@ public class UtilisateurBean implements Serializable {
         return oldPassword;
     }
     public void openNew() {
-        this.selectedUtilisateur = new Utilisateur();
+        this.selectedUtilisateur = new Identification();
     }
 
     public void createNewUser(){
-        Utilisateur newUser = new Utilisateur(this.username, this.newPassword);
+        Identification newUser = new Identification(this.login, this.newPassword);
         DAOFactory.getUtilisateurDAO().insert(newUser);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Member added successfully"));
         PrimeFaces.current().ajax().update("modifyUser:users" );
@@ -103,7 +100,7 @@ public class UtilisateurBean implements Serializable {
         }
 
         try {
-            Utilisateur existingUser = DAOFactory.getUtilisateurDAO().getByUsername(this.username);
+            Identification existingUser = DAOFactory.getUtilisateurDAO().getByUsername(this.login);
             if (existingUser == null) {
                 context.addMessage(null, new FacesMessage("User not found!"));
                 return null;
@@ -122,7 +119,7 @@ public class UtilisateurBean implements Serializable {
 //            this.newPassword = null;
 //            this.confirmPassword = null;
 
-            context.addMessage(null, new FacesMessage("Password successfully updated for '" + this.username + "'."));
+            context.addMessage(null, new FacesMessage("Password successfully updated for '" + this.login + "'."));
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             // Handle exceptions
             context.addMessage(null, new FacesMessage("An error occurred while changing the password. Please try again later."));

@@ -4,21 +4,20 @@ import vn.loto.jsf04.metier.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
-public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
+public class IdentificationDAO extends DAO<Identification, Roles, Integer> {
     @Override
-    public Utilisateur getByID(Integer id) {
+    public Identification getByID(Integer id) {
         return null;    }
 
     @Override
-    public ArrayList<Utilisateur> getAll() {
-        ArrayList<Utilisateur> utilisateurs = new ArrayList<>();
+    public ArrayList<Identification> getAll() {
+        ArrayList<Identification> utilisateurs = new ArrayList<>();
         String query = "{Call ps_UserWithRole}";
         try(CallableStatement callableStatement = connection.prepareCall(query)) {
             ResultSet resultSet = callableStatement.executeQuery();
             while (resultSet.next()){
-                Utilisateur utilisateur = new Utilisateur(resultSet.getString("NOM_UTILISATEUR"), resultSet.getString("PASSWORD"));
+                Identification utilisateur = new Identification(resultSet.getString("NOM_UTILISATEUR"), resultSet.getString("PASSWORD"));
                 Roles roles = new Roles();
                 roles.setName(resultSet.getString("NOM_ROLE"));
                 utilisateur.setRoleUser(roles);
@@ -30,7 +29,7 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
         }
         return utilisateurs;
     }
-    public Utilisateur getByUsername(String username) {
+    public Identification getByUsername(String username) {
         String query = "SELECT NOM_UTILISATEUR, PASSWORD, UTILISATEUR.ID_ROLE, ROLES.NOM_ROLE FROM UTILISATEUR JOIN ROLES ON ROLES.ID_ROLE = UTILISATEUR.ID_ROLE WHERE NOM_UTILISATEUR = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
@@ -42,7 +41,7 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
                 String roleName = resultSet.getString("NOM_ROLE");
 
                 Roles roles = new Roles(roleId, roleName);
-                Utilisateur utilisateur = new Utilisateur(nom, password, roles);
+                Identification utilisateur = new Identification(nom, password, roles);
                 return utilisateur;
             }
         } catch (SQLException e) {
@@ -53,15 +52,15 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
 
 
     @Override
-    public ArrayList<Utilisateur> getLike(Roles object) {
+    public ArrayList<Identification> getLike(Roles object) {
         return null;
     }
 
     @Override
-    public boolean insert(Utilisateur utilisateur) {
+    public boolean insert(Identification utilisateur) {
         String query = "INSERT INTO UTILISATEUR (NOM_UTILISATEUR, PASSWORD, ID_ROLE) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, utilisateur.getUsername());
+            preparedStatement.setString(1, utilisateur.getLogin());
             preparedStatement.setString(2, utilisateur.getPassword());
             preparedStatement.setInt(3, 2);
             int rowsAffected = preparedStatement.executeUpdate();
@@ -73,11 +72,11 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
     }
 
     @Override
-    public boolean update(Utilisateur utilisateur) {
+    public boolean update(Identification utilisateur) {
         String sqlRequest = "UPDATE UTILISATEUR SET PASSWORD = ? WHERE NOM_UTILISATEUR = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setString(1, utilisateur.getPassword());
-            preparedStatement.setString(2, utilisateur.getUsername());
+            preparedStatement.setString(2, utilisateur.getLogin());
             int rowsUpdated = preparedStatement.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -86,10 +85,10 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
         }
     }
 
-    public boolean updateUsernameRole(Utilisateur updateUtilisateur){
+    public boolean updateUsernameRole(Identification updateUtilisateur){
         String updateQuery = "{CALL ps_updateUsernameRole(?,?,?)}";
         try (CallableStatement callableStatement = connection.prepareCall(updateQuery)) {
-            callableStatement.setString(1, updateUtilisateur.getUsername());
+            callableStatement.setString(1, updateUtilisateur.getLogin());
             callableStatement.setInt(2, updateUtilisateur.getRoleUser().getId());
             callableStatement.setString(3, updateUtilisateur.getRoleUser().getName());
             int rowsUpdated = callableStatement.executeUpdate();
@@ -104,10 +103,10 @@ public class UtilisateurDAO extends DAO<Utilisateur, Roles, Integer> {
 
 
     @Override
-    public boolean delete(Utilisateur object) {
+    public boolean delete(Identification object) {
         String sqlRequest = "Delete from UTILISATEUR WHERE NOM_UTILISATEUR = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
-            preparedStatement.setString(1, object.getUsername());
+            preparedStatement.setString(1, object.getLogin());
             preparedStatement.executeUpdate();
             return true;
         }catch (SQLException E) {

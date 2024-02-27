@@ -2,9 +2,9 @@ package vn.loto.jsf04.metier;
 
 import lombok.Getter;
 import lombok.Setter;
-import vn.loto.jsf04.metier.SubMetier.Stock;
-import vn.loto.jsf04.metier.SubMetier.Titrage;
-import vn.loto.jsf04.metier.SubMetier.Volume;
+import vn.loto.jsf04.metier.submetier.Stock;
+import vn.loto.jsf04.metier.submetier.Titrage;
+import vn.loto.jsf04.metier.submetier.Volume;
 
 public class ArticleSearch {
     @Getter @Setter

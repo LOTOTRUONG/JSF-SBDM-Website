@@ -8,38 +8,38 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 
-public class Utilisateur {
+public class Identification {
     @Getter
     @Setter
-    private String username;
+    private String login;
     @Getter
     @Setter
     private String password;
 
     private Roles roleUser = new Roles();
 
-    public Utilisateur(){
+    public Identification(){
 
     }
 
-    public Utilisateur( String username, String password, Roles roleUser){
-        this.username = username;
+    public Identification(String login, String password, Roles roleUser){
+        this.login = login;
         this.password = password;
         this.roleUser = roleUser;
     }
-    public Utilisateur(String username, String password){
-        this.username = username;
+    public Identification(String login, String password){
+        this.login = login;
         this.password = password;
         this.roleUser = new Roles();
     }
 
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {

@@ -9,7 +9,7 @@ public class DAOFactory {
     public static ContinentDAO getContinentDAO(){return new ContinentDAO();}
     public static PaysDAO getPaysDAO(){return new PaysDAO();}
     public static MarqueDAO getMarqueDAO(){return new MarqueDAO();}
-    public static UtilisateurDAO getUtilisateurDAO(){return  new UtilisateurDAO();}
+    public static IdentificationDAO getUtilisateurDAO(){return  new IdentificationDAO();}
     public static RolesDAO getRolesDAO(){return new RolesDAO();}
 
     public static ArticleDAO getArticleDAO(){return  new ArticleDAO();}

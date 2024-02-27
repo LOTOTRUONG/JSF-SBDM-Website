@@ -1,4 +1,4 @@
-package vn.loto.jsf04.metier.SubMetier;
+package vn.loto.jsf04.metier.submetier;
 
 import lombok.Getter;
 import lombok.Setter;

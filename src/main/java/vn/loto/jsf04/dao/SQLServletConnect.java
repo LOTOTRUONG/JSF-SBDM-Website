@@ -14,8 +14,8 @@ public class SQLServletConnect {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String dbURL = "jdbc:sqlserver://localhost:1433;database=sdbm;encrypt=true;trustServerCertificate=true;";
-            String user = "sa";
-            String password = "azerty@123456";
+            String user = "dev";
+            String password = "abc@123456";
             connection = DriverManager.getConnection(dbURL, user, password);
             return connection;
         } catch (SQLException | ClassNotFoundException exception) {

@@ -205,15 +205,23 @@
                         <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{article.stockArticle}" />
                     </p:column>
 
-                    <!--button to edit article-->
-                    <p:column style="width:3rem;text-align: center" headerText="MODIFIER" exportable="false">
+                    <!--button to see detail or edit article-->
+                    <p:column style="width:3rem;text-align: center" headerText="DETAIL/MODIFIER" exportable="false">
+                        <p:commandButton update="articleDetail" oncomplete="PF('articleDialog').show()"
+                                         icon="pi pi-search" title="View" styleClass="rounded-button ui-button-info mr-2">
+                            <f:setPropertyActionListener value="#{article}"
+                                                         target="#{articleBean.selectedArticle}"/>
+                        </p:commandButton>
+
                         <p:commandButton update="modify-article-content" oncomplete="PF('modifyArticleDialog').show()"
                                          icon="pi pi-user-edit" title="Modify"
-                                        styleClass="edit-buton ui-button-sucess" process="@this">
+                                         styleClass="rounded-button ui-button-warning" process="@this">
                             <f:setPropertyActionListener value="#{article}"
                                                          target="#{articleBean.selectedArticle}"/>
                         </p:commandButton>
                     </p:column>
+
+
 
 
                     <!--print button-->
@@ -229,7 +237,84 @@
                 </p:dataTable>
             </div>
 
+            <!--detail article-->
+            <p:dialog header="DETAIL INFORMATION DE BIERES" widgetVar="articleDialog" modal="true" showEffect="fade"
+                      hideEffect="fade" resizable="false"  closeOnEscape="true">
+                <p:outputPanel id="articleDetail" styleClass="text-center" style="width: 40rem!important;">
+                    <p:column rendered="#{not empty articleBean.selectedArticle}">
+                        <div class="article">
+                            <div class="article-grid-item flex flex-row justify-content-center align-items-center mb-0 py-3">
+                                <h:graphicImage library="img" name="brand.png" style="width: 5%"/>
+                                <h:outputText value="#{articleBean.selectedArticle.marqueArticle.libelle}" styleClass="uppercase text-xl text-orange-600 font-bold"/>
+                            </div>
+                            <div class="article-grid-item-content flex justify-content-center align-items-center flex-column">
+                                <div class="flex flex-row  justify-content-center">
+                                    <h:graphicImage library="img" name="beer1.png" styleClass="w-3 flex-row"/>
+                                    <p:outputLabel value="#{articleBean.selectedArticle.volumeArticle.volume}" styleClass="border-circle bg-yellow-200 flex justify-content-center align-items-center" style="width: 2rem;height: 2rem; color: red"/>
 
+                                </div>
+
+                                <div class="article-name uppercase text-xl text-orange-600 font-bold py-5">#{articleBean.selectedArticle.nomArticle}</div>
+
+                                <div class="w-9">
+
+                                    <!--titrage de biere-->
+                                    <div class = "grid">
+                                        <div class="col-fixed" style="width: 40%">
+                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Titrage de bieres: </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.titrageArticle.titrage}</div>
+                                        </div>
+                                    </div>
+                                    <!--type de biere-->
+                                    <div class = "grid">
+                                        <div class="col-fixed" style="width: 40%">
+                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Type de bieres: </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.typeArticle.libelle}</div>
+                                        </div>
+                                    </div>
+
+                                    <!--couleur de biere-->
+                                    <div class = "grid">
+                                        <div class="col-fixed" style="width: 40%">
+                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Couleur de bieres: </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.couleurArticle.nomCouleur}</div>
+                                        </div>
+                                    </div>
+
+                                    <!--pays de biere-->
+                                    <div class = "grid">
+                                        <div class="col-fixed" style="width: 40%">
+                                            <div class="text-center p-3 border-round-sm surface-ground font-bold">Pay d'origin: </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="text-center p-3 border-round-sm surface-50">#{articleBean.selectedArticle.paysArticle.libelle}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-row justify-content-center align-items-center">
+                                <h:outputText value="#{articleBean.selectedArticle.prixArticle}"
+                                              styleClass="text-4xl font-bold">
+                                    <f:convertNumber currencySymbol="€" type="currency"/>
+                                </h:outputText>
+                            </div>
+                        </div>
+                    </p:column>
+                </p:outputPanel>
+                <div class="flex flex-row justify-content-center align-items-center my-6">
+                    <p:commandButton id="printDetailArticle" value="Print" type="button" icon="pi pi-print" styleClass="rounded-button shadow-1 mx-3 w-8rem">
+                        <p:printer target="articleDetail" configuration="globalStyles: true, title: 'Article Detail for #{articleBean.selectedArticle.nomArticle}', timeout: 1000"/>
+                    </p:commandButton>
+
+                    <p:commandButton id="cancelDetailArticle" value="Cancel" type="button" icon="pi pi-times" styleClass="rounded-button ui-button-secondary shadow-1 mx-3 w-8rem" onclick="PF('articleDialog').hide()"/>
+                </div>
+            </p:dialog>
             <!--Modify article-->
             <p:dialog header="Modifier l'Information de Bieres" widgetVar="modifyArticleDialog" modal="true" showEffect="fade"
                       hideEffect="fade" resizable="false"  closeOnEscape="true">

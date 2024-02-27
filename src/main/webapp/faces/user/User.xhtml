@@ -19,7 +19,7 @@
                         <p:outputLabel for="oldPassword" styleClass="text-center p-3 border-round-sm font-bold" value="Mot de passe actuel:"/>
                     </div>
                     <div class="col">
-                        <p:password id="oldPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.oldPassword}" required="true"/>
+                        <p:password id="oldPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{identificationBean.oldPassword}" required="true"/>
                     </div>
                 </div>
                 <div class = "grid flex-nowrap justify-content-center align-items-center">
@@ -27,7 +27,7 @@
                         <p:outputLabel for="password" styleClass="text-center p-3 border-round-sm font-bold" value="Nouveau mot de passe:"/>
                     </div>
                     <div class="col">
-                        <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.newPassword}" required="true"/>
+                        <p:password id="password" styleClass="text-center p-3 border-round-sm surface-50" value="#{identificationBean.newPassword}" required="true"/>
                     </div>
                 </div>
 
@@ -36,12 +36,12 @@
                         <p:outputLabel for="confirmPassword" styleClass="text-center p-3 border-round-sm font-bold" value="Verifier mot de passe:"/>
                     </div>
                     <div class="col">
-                        <p:password id="confirmPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{utilisateurBean.confirmPassword}" required="true"/>
+                        <p:password id="confirmPassword" styleClass="text-center p-3 border-round-sm surface-50" value="#{identificationBean.confirmPassword}" required="true"/>
                     </div>
                 </div>
 
                     <!-- Modify button -->
-                    <p:commandButton type="submit" value="Modify" action="#{utilisateurBean.changePassword()}" ajax="false" styleClass="my-4"/>
+                    <p:commandButton type="submit" value="Modify" action="#{identificationBean.changePassword()}" ajax="false" styleClass="my-4"/>
 
             </h:form>
         </div>

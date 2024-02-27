@@ -1,4 +1,4 @@
-package vn.loto.jsf04.metier.SubMetier;
+package vn.loto.jsf04.metier.submetier;
 
 public class Titrage {
 
