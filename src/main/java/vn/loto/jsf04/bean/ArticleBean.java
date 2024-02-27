@@ -1,14 +1,10 @@
 package vn.loto.jsf04.bean;
 
-import com.lowagie.text.*;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import vn.loto.jsf04.dao.DAOFactory;
 import vn.loto.jsf04.metier.*;
-import vn.loto.jsf04.service.PrintDocumentView;
 
 import java.io.Serializable;
 import java.util.ArrayList;

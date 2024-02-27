@@ -51,7 +51,7 @@ public class IdentificationBean implements Serializable {
     @PostConstruct
     public void init(){
         if (allUtilisateurs == null) {
-            allUtilisateurs = DAOFactory.getUtilisateurDAO().getAll();
+            allUtilisateurs = DAOFactory.getIdentificationDAO().getAll();
         }
         selectedUtilisateur = new Identification();
         this.selectedUtilisateurList = new ArrayList<>();
@@ -80,7 +80,7 @@ public class IdentificationBean implements Serializable {
 
     public void createNewUser(){
         Identification newUser = new Identification(this.login, this.newPassword);
-        DAOFactory.getUtilisateurDAO().insert(newUser);
+        DAOFactory.getIdentificationDAO().insert(newUser);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Member added successfully"));
         PrimeFaces.current().ajax().update("modifyUser:users" );
     }
@@ -100,7 +100,7 @@ public class IdentificationBean implements Serializable {
         }
 
         try {
-            Identification existingUser = DAOFactory.getUtilisateurDAO().getByUsername(this.login);
+            Identification existingUser = DAOFactory.getIdentificationDAO().getByUsername(this.login);
             if (existingUser == null) {
                 context.addMessage(null, new FacesMessage("User not found!"));
                 return null;
@@ -112,7 +112,7 @@ public class IdentificationBean implements Serializable {
             }
 
             // Password update in the database
-            DAOFactory.getUtilisateurDAO().update(existingUser);
+            DAOFactory.getIdentificationDAO().update(existingUser);
 
             // Clear the fields after successful password change
 //            this.oldPassword = null;
@@ -135,13 +135,13 @@ public class IdentificationBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User Removed"));
             //PrimeFaces.current().executeScript("PF('deleteColorDialog').hide()");
             PrimeFaces.current().ajax().update("modifyUser:message", "modifyUser:users");
-            DAOFactory.getUtilisateurDAO().delete(selectedUtilisateur);
+            DAOFactory.getIdentificationDAO().delete(selectedUtilisateur);
         }
     }
 
     public void updateUser() {
         if (selectedUtilisateur != null) {
-            if (DAOFactory.getUtilisateurDAO().updateUsernameRole(selectedUtilisateur)) {
+            if (DAOFactory.getIdentificationDAO().updateUsernameRole(selectedUtilisateur)) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("User updated successfully"));
             }
             else {

@@ -79,9 +79,9 @@ public class MyLoginModule implements LoginModule {
                 throw new LoginException("Data specified had null values");
             }
             Identification utilisateur = new Identification(username, password);
-            Identification users = DAOFactory.getUtilisateurDAO().getByUsername(username);
+            Identification users = DAOFactory.getIdentificationDAO().getByUsername(username);
 
-            if (utilisateur.getUsername().equals(users.getUsername()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
+            if (utilisateur.getLogin().equals(users.getLogin()) && HashPassword.validate(utilisateur.getPassword(), users.getPassword())) {
                 if ("admin".equals(users.getRoleUser().getName())) {
                     // Add all role names to userGroups if the user is an admin
                     List<Roles> roles = DAOFactory.getRolesDAO().getAll(); // Assuming you have a method to retrieve all roles

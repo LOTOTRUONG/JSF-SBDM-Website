@@ -35,7 +35,7 @@ public class LoginBean implements Serializable {
 
     private String originalURI;
     @Inject
-    private IdentificationBean utilisateurBean;
+    private IdentificationBean identificationBean;
 
 
     @PostConstruct
@@ -60,12 +60,12 @@ public class LoginBean implements Serializable {
         */
 
     }
-    public IdentificationBean getUtilisateurBean() {
-        return utilisateurBean;
+    public IdentificationBean getIdentificationBean() {
+        return identificationBean;
     }
 
-    public void setUtilisateurBean(IdentificationBean utilisateurBean) {
-        this.utilisateurBean = utilisateurBean;
+    public void setIdentificationBean(IdentificationBean identificationBean) {
+        this.identificationBean = identificationBean;
     }
 
 
@@ -75,8 +75,8 @@ public class LoginBean implements Serializable {
             request.login(username, password);
             //return originalURI;
             // Set username in UtilisateurBean
-            utilisateurBean.setUsername(username);
-            utilisateurBean.setOldPassword(password);
+            identificationBean.setLogin(username);
+            identificationBean.setOldPassword(password);
             // If login is successful, redirect to the original URI if available, or to a default page
             if (originalURI != null && !originalURI.isEmpty()) {
                 return originalURI + "?faces-redirect=true";
